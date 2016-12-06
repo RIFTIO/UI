@@ -1,0 +1,104 @@
+.JSONViewer {
+	/*
+	copied from node_modules/prismjs/themes/prismjs.css
+*/
+	:not(pre) > code[class*="language-"],
+	pre[class*="language-"] {
+		font-size: 12px;
+		/* border: 1px solid rgba(220, 220, 220, 0.5);*/
+		border-radius: 4px;
+		background-color: rgba(255, 255, 255, .25);
+		overflow:auto;
+	}
+
+	/* Inline code */
+	:not(pre) > code[class*="language-"] {
+		padding: .1em;
+	}
+
+	.token.comment,
+	.token.prolog,
+	.token.doctype,
+	.token.cdata {
+		color: slategray;
+	}
+
+	.token.punctuation {
+		color: #333;
+	}
+
+	.namespace {
+		opacity: .7;
+	}
+
+	.token.property,
+	.token.tag,
+	.token.boolean,
+	.token.number,
+	.token.constant,
+	.token.symbol,
+	.token.deleted {
+		color: #905;
+	}
+
+	.token.selector,
+	.token.attr-name,
+	.token.string,
+	.token.char,
+	.token.builtin,
+	.token.inserted {
+		color: #df5000;
+	}
+
+	.token.operator,
+	.token.entity,
+	.token.url,
+	.language-css .token.string,
+	.style .token.string {
+		color: #a67f59;
+		background: none !important;
+	}
+
+	.token.atrule,
+	.token.attr-value,
+	.token.keyword {
+		color: #07a;
+	}
+
+	.token.function {
+		color: #DD4A68;
+	}
+
+	.token.regex,
+	.token.important,
+	.token.variable {
+		color: #e90;
+	}
+
+	.token.important,
+	.token.bold {
+		font-weight: bold;
+	}
+	.token.italic {
+		font-style: italic;
+	}
+
+	.token.entity {
+		cursor: help;
+	}
+}
+
+.composerPopout {
+	background-color: #f1f1f1;
+	h1 {
+			height: 51px;
+			line-height: 51px;
+			margin-left: 80px;
+			padding-left: 118px;
+			position: absolute;
+			left: 0;
+			text-transform: uppercase;
+			font-size: 1.625rem;
+			font-weight: normal;
+	}
+}

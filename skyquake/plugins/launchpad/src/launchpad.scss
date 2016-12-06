@@ -1,0 +1,314 @@
+
+/*
+ *
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import "style/_colors.scss";
+@import "style/layout.scss";
+@import '../node_modules/open-iconic/font/css/open-iconic.css';
+
+.app-body {
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-direction:column;
+        flex-direction:column;
+    display: flex;
+    flex-direction: column;
+    -ms-flex-align: stretch;
+        align-items: stretch;
+    height: 100%;
+}
+
+.name-input {
+  color: $gray-darkest;
+}
+.lpReactDashboard {
+  display:-ms-flexbox;
+  display:flex;
+  height:100%;
+  .app-body {
+    > header {
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
+    }
+  }
+}
+.lp-react-launch {
+  display: -ms-flexbox;
+  display: flex;
+}
+.app-body.create-fleet {
+  height: 100%;
+}
+.name-input input {
+  background:white !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #ffffff, 0 1px 0 #ffffff;
+  display: block;
+  font-size: 120%;
+  height: 35px;
+  margin: 0;
+  margin-top: 0.25rem;
+  width: 350px;
+}
+
+.baseGridCell {
+  -ms-flex-align: center;
+      align-items: center;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex: 0 0 auto;
+      flex: 0 0 auto;
+  min-height: 30px;
+  overflow: hidden;
+  padding-left: 2px;
+  padding-right: 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lp_dashboard {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex: 1;
+      flex: 1;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  height: 100%;
+
+  /* Network service list styles */
+
+  .leftMinimizedNsListPanel {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 1 100%;
+        flex: 1 100%;
+    height: auto;
+    max-width: 30px;
+    min-width: 30px;
+    header {
+      background-color: white;
+      display:block;
+      h3 {
+        /* vertical | horizontal*/
+        /* top | horizonal | bottom*/
+        /* top right bottom left*/
+        padding: 1.5rem 0;
+        color: white;
+
+      }
+    }
+  }
+
+  .nsListPanel {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 0 1;
+        flex: 0 1;
+    height: auto;
+    width: auto;
+    /* max-width: 500px;*/
+    /* min-width: 500px;*/
+
+    header {
+      background-color: white;
+      display:block;
+    }
+
+    &-body {
+      -ms-flex-flow: col wrap;
+          flex-flow: col wrap;
+    }
+  }
+
+  .nsListPanelToggle {
+    position:absolute;
+    top:1.5rem;
+    right:0.5rem;
+    cursor:pointer;
+    display:-ms-flexbox;
+    display:flex;
+    &:before {
+    }
+    &.on:before{
+    }
+  }
+
+  .nsListPanelToolbar {
+    background-color: $gray;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+    -ms-flex-direction: row;
+        flex-direction: row;
+    padding-left: 1rem;
+    .button {
+      cursor: pointer;
+      display: -ms-flexbox;
+      display: flex;
+      /*flex: 0;*/
+      margin: 4px;
+      margin: 0.5rem;
+      img {
+        height: 1.5rem;
+        margin-right: 0.85rem;
+      }
+      span {
+        padding-top: 0.2rem;
+      }
+    }
+  }
+  .nsList {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 1;
+        flex: 1;
+    -ms-flex-direction: column;
+        flex-direction: column;
+    overflow: auto;
+    padding-left: 0;
+    padding-right: 0;
+    &-body {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+  .nsListItemRow {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+        flex-direction: row;
+  }
+  .cellValue {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nsList-body .nsListItemRow:nth-child(odd):not(.openedCard) {
+    background-color: $gray-lighter;
+  }
+  .nsList-body .nsListItemRow:nth-child(even):not(.openedCard) {
+    background-color: $gray-lightest;
+  }
+  .nsListItemRow.openedCard {
+    background-color: $lighter-blue;
+  }
+  .nsListHeaderRow {
+    background-color: $gray;
+    border-top: 1px solid $gray-lightest;
+    border-bottom: 1px solid $gray-lightest;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+    -ms-flex-direction: row;
+        flex-direction: row;
+  }
+  .nsListItemField {
+    @extend .baseGridCell;
+    span {
+      text-overflow: ellipsis;
+    }
+
+  }
+  .nsListHeaderField {
+    @extend .baseGridCell;
+    text-transform: uppercase;
+  }
+  .nsListHeaderField.nsColAction {
+  }
+  .nsListItemField.nsColAction {
+      padding-left: 0.2rem;
+  }
+
+  .colBorderRight {
+    border-right: 1px solid $gray-lightest;
+  }
+
+  .nsColNsName {
+    @extend .colBorderRight;
+    width: 130px;
+  }
+  .nsColNsdName {
+    @extend .colBorderRight;
+    width: 130px;
+  }
+  .nsColStatus {
+    @extend .colBorderRight;
+    width: 85px;
+  }
+  .nsColUptime {
+    @extend .colBorderRight;
+    width: 110px;
+  }
+  .nsColAction {
+    width: 20px;
+    text-overflow: clip;
+  }
+
+  .actionButton {
+    cursor: pointer;
+    /* margin-top is a hack to fix the top of the glyph from*/
+    /* being chopped off*/
+    margin-top: 5px;
+  }
+
+  .nsViewportLink {
+    text-decoration: none;
+    color: black;
+  }
+
+  /* Network service detail card styles */
+
+  .nsCardPanel {
+    /*border: 1px solid black;*/
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+    height: auto;
+    header {
+      background-color: white;
+    }
+    &_content {
+    }
+    &-body {
+      background-color: $gray;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex: 1;
+          flex: 1;
+      -ms-flex-direction: row;
+          flex-direction: row;
+      min-width: 0;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+  }
+
+  /* Angular wrapping */
+  lp-react-dashboard {
+    display:-ms-flexbox;
+    display:flex;
+  }
+}
+
+
+

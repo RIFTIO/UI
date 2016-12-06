@@ -1,0 +1,160 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import 'style/_colors.scss';
+.accountSidebar {
+    -ms-flex:1 1 100%;
+        flex:1 1 100%;
+    max-width:300px;
+    h1 {
+      margin-left:1rem;
+    }
+    a {
+        text-decoration:none;
+                color:inherit;
+                width:100%;
+    }
+    .accountSidebarCard {
+        width:auto;
+        height:auto;
+        background:inherit;
+        header {
+            background:white;
+            padding-left:0.5rem;
+            display:-ms-flexbox;
+            display:flex;
+                -ms-flex-align:start;
+                    align-items:flex-start;
+            text-transform:uppercase;
+            h3 {
+                display:-ms-flexbox;
+                display:flex;
+                -ms-flex:1;
+                    flex:1;
+                -ms-flex-pack:justify;
+                    justify-content:space-between;
+                -ms-flex-align: center;
+                    align-items: center;
+                 padding-left:0.5rem;
+            }
+        }
+        &--content {
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-pack:start;
+            justify-content:flex-start;
+            -ms-flex-align: center;
+                align-items: center;
+            height:70px;
+        }
+        &--logo{
+            max-width:50px;
+            max-height:50px;
+        }
+        .pool-card {
+            a:before {
+                text-align: center;
+                font-size: 0.575rem;
+                border: 1px solid black;
+                border-radius: 4px;
+                padding: 0.25rem 0.425rem 0.25rem 0.25rem;
+                height: 0.625rem;
+                width: 0.625rem;
+                margin-right: 0.25rem;
+            }
+            a:nth-child(even) {
+                background-color: $lightest-gray;
+            }
+            a.link-item {
+                background-color: $dark-gray;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-direction: row;
+                    flex-direction: row;
+                padding: 1rem;
+                -ms-flex-pack: start;
+                    justify-content: flex-start;
+                text-decoration: none;
+                color: black;
+            }
+            a.empty-pool {
+                margin-top:0.125rem;
+                display:-ms-flexbox;
+                display:flex;
+                -ms-flex-pack: justify;
+                    justify-content: space-between;
+                img {
+                    height:1rem;
+                }
+            }
+            a.vm:before {
+                content: 'VM';
+            }
+            a.network:before {
+                content: 'NT';
+            }
+            a.port:before {
+                content: 'PT';
+            }
+        }
+        h2.create-title {
+                font-size: 0.85rem;
+                text-transform:uppercase;
+                padding: 0px;
+                background-color:inherit
+        }
+        &_create {
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-pack:justify;
+                justify-content:space-between;
+            padding:1rem;
+            font-size: 0.85rem;
+            text-transform:uppercase;
+            font-weight:bold;
+            background-color: $gray-light;
+            img {
+                height:1rem;
+            }
+        }
+    }
+    .connectivityStatus {
+        border:1px solid $lightest-gray;
+        border-radius:50%;
+        width:0.5rem;
+        height:0.5rem;
+        margin-right:1rem;
+        background:$lightest-gray;
+        &--success {
+            background:$brand-green;
+        }
+        &--failure {
+            background:$error-red;
+        }
+    }
+    .refreshList {
+        margin-left: 1rem;
+        margin-bottom:1rem;
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-align:center;
+        align-items:center;
+        padding: 0.5rem;
+        cursor: pointer;
+        text-transform:uppercase;
+    }
+}

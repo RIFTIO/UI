@@ -1,0 +1,59 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+var Webpack = require('webpack');
+var path = require('path');
+var nodeModulesPath = path.resolve(__dirname, 'node_modules');
+var buildPath = path.resolve(__dirname, 'public', 'build');
+var mainPath = path.resolve(__dirname, 'src', 'main.js');
+var frameworkPath = '../skyquake/framework/';
+var CommonsPlugin = new require("webpack/lib/optimize/CommonsChunkPlugin")
+// Added to overcome node-sass bug https://github.com/iam4x/isomorphic-flux-boilerplate/issues/62
+process.env.UV_THREADPOOL_SIZE=64;
+var config = {
+    resolve: {
+        extensions: ['', '.js', '.jsx', '.css', '.scss'],
+        root: path.resolve(frameworkPath),
+        alias: {
+            'widgets': path.resolve(frameworkPath) + '/widgets',
+            'style':  path.resolve(frameworkPath) + '/style',
+            'utils':  path.resolve(frameworkPath) + '/utils'
+        }
+    },
+    module: {
+        loaders: [{
+                test: /\.(jpe?g|png|gif|svg|ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/i,
+                loader: "file-loader"
+            },
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ["es2015", "stage-0", "react"]
+                }
+            }, {
+                test: /\.css$/,
+                loader: 'style!css'
+            }, {
+                test: /\.scss/,
+                loader: 'style!css!sass?includePaths[]='+ path.resolve(frameworkPath)
+            }
+        ]
+    }
+};
+module.exports = config;

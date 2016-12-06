@@ -1,0 +1,16 @@
+{
+    "root": "public",
+    "name": "Logging",
+    "dashboard": "./loggingGeneral.jsx",
+    "order": 3,
+    "priority":2,
+    "routes": [
+        {
+            "label": "Logging",
+            "route": "/",
+            "component": "./loggingGeneral.jsx",
+            "path": "",
+            "type": "internal"
+        }
+    ]
+}

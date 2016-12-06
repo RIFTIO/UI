@@ -1,0 +1,23 @@
+{
+    "root": "public",
+    "name": "Accounts",
+    "dashboard": "./account/accountsDashboard.jsx",
+    "order": 3,
+    "priority":1,
+    "routes": [
+    {
+        "label": "Accounts Dashboard",
+        "route": "accounts",
+        "component": "./account/accountsDashboard.jsx",
+        "path": "accounts",
+        "type": "internal",
+        "routes": [
+            {
+                "route": ":type/:name",
+                "component": "./account/account.jsx",
+                "path": ":type/:name",
+                "type": "internal"
+            }
+        ]
+    }]
+}

@@ -1,0 +1,176 @@
+@import '../../style/_colors.scss';
+$slider-background: rgba(19, 82, 150, 0.2);
+$disabled-slider-background: $dark-gray;
+//Generates ticks on bar. Not currently used
+$slider-background-ticks: repeating-linear-gradient(to right, $slider-background, $slider-background 0%, #fff 0%, #fff 1%, $slider-background 1%, $slider-background 25%);
+$thumb-color: rgba(0, 119, 200, 1);
+$disabled-thumb-color: $dark-gray;
+$track-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+$thumb-height: 50;
+$track-height: 3;
+$input-margin: 20;
+$-webkit-handle-offset: ($track-height - $thumb-height) / 2;
+
+//(thH-ttW) / 2
+
+@mixin thumbStyling {
+    box-shadow: $track-shadow;
+    border: 0px solid #000000;
+    background: $thumb-color;
+    box-shadow: 2px 2px 2px 0px #ccc;
+    height: $thumb-height + px;
+    width: 20px;
+    cursor: pointer;
+}
+@mixin inputTrack {
+    width: 100%;
+    height: $track-height + px;
+    cursor: pointer;
+    animate: 0.2s;
+}
+@mixin infoBase {
+    display: flex;
+    justify-content: space-between;
+}
+@mixin sliderBase {
+    input[type=range] {
+        position:absolute;
+        -webkit-appearance: none;
+        margin: $input-margin + px 0;
+        width: 100%;
+        &:focus {
+            outline: none;
+        }
+        &::-webkit-slider-thumb {
+            @include thumbStyling;
+            -webkit-appearance: none;
+            margin-top: $-webkit-handle-offset + px;
+
+        }
+        &::-moz-range-thumb {
+            @include thumbStyling;
+        }
+        &::-ms-thumb {
+            @include thumbStyling;
+        }
+        &::-webkit-slider-runnable-track {
+            @include inputTrack;
+            box-shadow: $track-shadow;
+            background: $slider-background;
+            border: 0px solid #000101;
+        }
+        &:focus::-webkit-slider-runnable-track {
+            background: $slider-background;
+        }
+        &::-moz-range-track {
+            @include inputTrack;
+            box-shadow: $track-shadow;
+            background: $slider-background;
+            border: 0px solid #000101;
+        }
+        &::-ms-track {
+            @include inputTrack;
+            background: transparent;
+            border-color: transparent;
+            border-width: 39px 0;
+            color: transparent;
+        }
+        &::-ms-fill-lower {
+            background: $slider-background;
+            border: 0px solid #000101;
+            box-shadow: $track-shadow;
+        }
+        &::-ms-fill-upper {
+            background: #ac51b5;
+            border: 0px solid #000101;
+            box-shadow: $track-shadow;
+        }
+        &:focus::-ms-fill-lower {
+            background: $slider-background;
+        }
+        &:focus::-ms-fill-upper {
+            background: $slider-background;
+        }
+    }
+    &-info {
+        @include infoBase
+    }
+}
+.SqRangeInput {
+    &--container {
+        background:white;
+        border: 1px solid #ccc;
+    }
+    &--horizontal {
+        @include sliderBase;
+        position: relative;
+        height:$thumb-height + px;
+        margin: $input-margin / 2 + px;
+    }
+    &--vertical {
+        @include sliderBase;
+        position: relative;
+
+        input[type=range] {
+            -webkit-appearance: none;
+            height: 100%;
+            width: $track-height + px;
+            transform: rotate(270deg);
+            transform-origin: right;
+            &::-webkit-slider-thumb {
+                box-shadow: -2px 2px 2px 0px #ccc;
+            }
+            &::-moz-range-thumb {
+                box-shadow: -2px 2px 2px 0px #ccc;
+            }
+            &::-ms-thumb {
+                box-shadow: -2px 2px 2px 0px #ccc;
+            }
+        }
+        &-info {
+            @include infoBase;
+
+            div {
+                transform: translateY(10px) rotate(90deg);
+            }
+        }
+    }
+    &.is-disabled {
+        input[type=range] {
+            &:disabled {
+                &::-webkit-slider-thumb {
+                    background: $disabled-thumb-color;
+                }
+                &::-moz-range-thumb {
+                    background: $disabled-thumb-color;
+                }
+                &::-ms-thumb {
+                    background: $disabled-thumb-color;
+                }
+                &::-webkit-slider-runnable-track {
+                    background: $disabled-slider-background;
+                }
+                &:focus::-webkit-slider-runnable-track {
+                    background: $disabled-slider-background;
+                }
+                &::-moz-range-track {
+                    background: $disabled-slider-background;
+                }
+                &::-ms-track {
+                }
+                &::-ms-fill-upper {
+                    background: $disabled-slider-background;
+                }
+                &::-ms-fill-lower {
+                    background: $disabled-slider-background;
+                }
+                &:focus::-ms-fill-lower {
+                    background: $disabled-slider-background;
+                }
+                &:focus::-ms-fill-upper {
+                    background: $disabled-slider-background;
+                }
+            }
+        }
+    }
+}

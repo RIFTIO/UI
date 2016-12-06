@@ -1,0 +1,50 @@
+
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import '_variables';
+.CatalogPanelToolbar {
+    display: block;
+    padding: 0;
+    margin: 0;
+	height: auto;
+	border-bottom: 0 solid $panel-border-color-light;
+	white-space: nowrap;
+	text-align: center;
+	h1 {
+		white-space: nowrap;
+		text-align: left;
+        font-size: 14px;
+        line-height: 16px;
+        padding: 20px;
+        text-transform: uppercase;
+        font-weight: bold;
+        background-color: #ffffff;
+	}
+	.btn-bar {
+		height: 55px;
+		padding: 10px 0;
+		background-color: rgba(203, 209, 209, 1);
+		.btn-group {
+			padding: 0 8px;
+			display: inline-block;
+			input {
+				margin: 0 4px;
+			}
+		}
+	}
+}

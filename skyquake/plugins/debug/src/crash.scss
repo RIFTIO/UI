@@ -1,0 +1,55 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+.crash-app {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    align-content: stretch;
+    width: 100%;
+    flex: 1 1 100%;
+    overflow-y: auto;
+
+    .crash-details-wrapper {
+      flex: 1;
+
+      .form-actions {
+        display: flex;
+        justify-content: center;
+      }
+      .crash-container {
+        margin: 1rem 1.5rem;
+        background-color:#e5e5e5;
+        .primary {
+          background-color:#ffffff;
+        }
+        .tree {
+          padding:1.5rem;
+        }
+        h2 {
+          background-color: #ffffff;
+          margin-bottom: 0.125rem;
+          font-size: 0.9rem;
+          padding: 1.125rem;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+      }
+    }
+}
+

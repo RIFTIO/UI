@@ -1,0 +1,435 @@
+
+/*
+ *
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import 'style/_colors.scss';
+@import '../../node_modules/open-iconic/font/css/open-iconic.css';
+.launchpadCard {
+  display:-ms-flexbox;
+  display:flex;
+  margin-top: 0.75rem;
+  &-body{
+    position: relative;
+  }
+  .deletingIndicator {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex:1;
+        flex:1;
+    -ms-flex-align: center;
+        align-items: center;
+    -ms-flex-pack: center;
+        justify-content: center;
+  }
+  &_launch {
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-direction:column;
+        flex-direction:column;
+    -ms-flex: 1;
+        flex: 1;
+    -ms-flex-pack: center;
+        justify-content: center;
+    -ms-flex-align: center;
+        align-items: center;
+    img {
+      width: 88px;
+      padding:1rem;
+    }
+  }
+  &_header {
+    color:white;
+    padding-right: 1rem;
+    min-width: 693px;
+    max-width: 693px;
+    &-link, a {
+      display:-ms-flexbox;
+      display:flex;
+      -ms-flex-align:center;
+          align-items:center;
+      text-decoration: none;
+      color: inherit;
+    }
+    &-link {
+      margin-left:0.5rem;
+      cursor:pointer;
+      .title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 460px;
+        display: block;
+      }
+    }
+    .oi {
+      margin:0 0 -0.25rem 0.5rem;
+    }
+    &-title {
+      display: -ms-flexbox;
+      display: flex;
+      line-height: 3rem;
+      background-color: $brand-green-light;
+      /*background-color: $primary-header;*/
+      position: relative;
+      -ms-flex-direction: row;
+          flex-direction: row;
+      -ms-flex-align: center;
+          align-items: center;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+      padding-right:1rem;
+      &-off {
+        background-color:white;
+        color:black;
+      }
+    }
+        .activeIcon{
+          color: #dadada;
+          position:relative;
+        span:after{
+          content: '\25b2';
+          color:#dadada;
+          width:0.5rem;
+          height:0.5rem;
+          position: absolute;
+          top: 17px;
+          left: 8px;
+        }
+      }
+      .inActiveIcon {
+        color:white;
+        position:relative;
+      }
+    &-actions {
+      -ms-flex: 1;
+          flex: 1;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+      padding-right: 1rem;
+      h3{
+        padding-right:0.25rem;
+        text-transform: capitalize;
+      }
+
+    }
+    &-status {
+      background-color: $brand-green;
+      &-current {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-pack:justify;
+            justify-content:space-between;
+        padding: 0.5rem 0;
+        span,a {
+          padding: 0 0.25rem;
+        }
+        a{
+          cursor:pointer;
+          &:hover {
+            text-decoration:underline;
+          }
+        }
+      }
+    }
+    &-operational-status {
+      &_loading {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-direction:column;
+            flex-direction:column;
+        -ms-flex-pack: center;
+            justify-content: center;
+        justify-content: center;
+        -ms-flex-align: center;
+            align-items: center;
+        color:$gray-darkest;
+     }
+     &_open {
+        overflow: hidden;
+        background: #ddd;
+        height: 100%;
+        visibility: visible;
+        opacity: 1;
+        position: absolute;
+        width: 100%;
+        z-index: 99;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+            flex-direction: column;
+        -ms-flex-align: center;
+            align-items: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+        -ms-flex-line-pack: center;
+            align-content: center;
+        color: black;
+        h2{
+              padding: 2rem;
+        }
+        ul,li {
+          margin:0.25rem 1rem 0 0.825rem;
+          list-style-type:disc;
+          color:black;
+        }
+        ul {
+          overflow: auto;
+          padding-left: 0.5rem;
+          padding-right: 1rem;
+          margin-right: 0.5rem;
+          height: inherit;
+
+          ul {
+            li {
+              list-style-type: circle;
+            }
+          }
+        }
+      }
+      &_close {
+        height: 0;
+        visibility:hidden;
+        opacity:0;
+      }
+    }
+    &-vnfr_management-links {
+
+      &_loading {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-direction:column;
+            flex-direction:column;
+        -ms-flex-pack: center;
+            justify-content: center;
+        -ms-flex-align: center;
+            align-items: center;
+        color:$gray-darkest;
+     }
+      &_open {
+        overflow:hidden;
+        background: #ddd;
+        height: 100%;
+        visibility:visible;
+        opacity:1;
+        position:absolute;
+        width:100%;
+        z-index: 99;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+            flex-direction: column;
+        -ms-flex-align: center;
+            align-items: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+        -ms-flex-line-pack: center;
+            align-content: center;
+        color:black;
+
+        .notice {
+          padding-top: 0.5rem;
+          font-size: 0.75rem;
+          color: $gray-darker;
+        }
+
+        span {
+          cursor: pointer;
+          text-decoration: underline;
+        }
+
+        a {
+          cursor: pointer;
+          margin-left: 0.5rem;
+          font-weight: normal;
+          color: black;
+        }
+        h2 {
+          padding:2rem;
+        }
+        ul,li {
+          margin:0.25rem 1rem 0 0.825rem;
+          list-style-type:disc;
+          color:black;
+        }
+        ul {
+          width:90%;
+          overflow: auto;
+          padding-right: 1rem;
+          margin-right: 0.5rem;
+          height: inherit;
+        }
+        li {
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+          display: -ms-flexbox;
+          display: flex;
+        }
+      }
+      &_close {
+        height: 0;
+        visibility:hidden;
+        opacity:0;
+      }
+    }
+    .failed {
+      background-color:white;
+      color:black;
+      a {
+        color:black !important;
+      }
+    }
+  }
+
+  &_content {
+    .launchpadCard_content {
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+    .empty {
+      min-height:50px;
+      max-width: 100%;
+      display:-ms-flexbox;
+      display:flex;
+      -ms-flex-pack: center;
+          justify-content: center;
+      -ms-flex-align: center;
+          align-items: center;
+    }
+  }
+  &_title {
+      color:$black;
+      background:$secondary-header;
+      padding: 0.5rem;
+      /* margin: 0 0 0.5rem 0;*/
+      /* border-top:1px solid #666;*/
+      /* border-bottom:1px solid #666;*/
+      border-top:1px solid #f1f1f1;
+      border-bottom:1px solid #f1f1f1;
+  }
+
+  &_data-list {
+    ul, dl{
+      display:-ms-flexbox;
+      display:flex;
+      -ms-flex-direction:row;
+          flex-direction:row;
+      -ms-flex-wrap:wrap;
+          flex-wrap:wrap;
+      -ms-flex-align:start;
+          align-items:flex-start;
+       font-size: 0.825rem;
+      li{
+        -ms-flex:1 1 30%;
+            flex:1 1 30%;
+      }
+    }
+    dl {
+      margin: 0.5rem 0 0.5rem 0;
+      dt{
+        margin: 0 0 0 0.5rem;
+        text-transform:uppercase;
+      }
+      dd{
+        margin: 0 0 0 0.5rem;
+      }
+    }
+    &.CONFIG-PRIMITIVES {
+      height: 400px;
+      overflow-y: scroll;
+      h1 {
+        margin: 0 0 0 0.5rem;
+      }
+      > div {
+        overflow: hidden;
+      }
+    }
+  }
+  &_data-list.EPA-PARAMS {
+      /* height: 105px;*/
+      width: 715px;
+      overflow-y: scroll;
+      h1 {
+        margin: 0 0 0 0.5rem;
+      }
+      > div {
+        overflow: hidden;
+      }
+  }
+  &_controls{
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-direction:row;
+        flex-direction:row;
+    .react-tabs {
+      -ms-flex: auto;
+          flex: auto;
+    [role=tab][aria-selected=true] {
+      background:none;
+      border:none;
+      color: rgb(85, 26, 139);
+    }
+    [role=tab]{
+      text-decoration:underline;
+      border:none;
+      &:focus{
+        outline:none;
+        box-shadow:none;
+        border:none;
+        &:after {
+           background:none;
+           border:none;
+      }
+    }
+
+  }
+    [role=tablist] {
+      border:none;
+      margin: 0 0 10px;
+      padding: 0;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+
+         [role=tab]:first-child {
+            -ms-flex: 1;
+                flex: 1;
+         }
+    }
+
+    }
+
+  }
+  .slick-initialized.slick-slider {
+    /* min-height:200px;*/
+  }
+
+  .close-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    z-index: 100;
+    cursor: pointer;
+    img {
+      width: 1.25rem;
+      height: 1.25rem;
+      background-color: white;
+      border-radius: 15px;
+    }
+  }
+}

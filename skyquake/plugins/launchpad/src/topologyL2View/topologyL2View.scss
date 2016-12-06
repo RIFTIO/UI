@@ -1,0 +1,161 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import "style/_colors.scss";
+
+.app-body.topologyL2ViewAppBody {
+	flex:1;
+}
+.topologyL2View {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: stretch;
+	flex: 1;
+	position: relative;
+	margin: 0.5rem;
+	min-width: 1340px;
+
+	.dashboardCard {
+		flex: 0 1 auto;
+		width: auto;
+		height: auto;
+		margin: 0px;
+
+		.corner-accent {
+			display: none;
+		}
+		header {
+			background-color: white;
+		}
+		&.recordDetails {
+			flex: 1 1 auto;
+			width: 400px;
+
+			pre {
+				margin: 0;
+				white-space: pre-wrap;
+			}
+		}
+		.nodeAttr {
+			overflow: auto;
+			margin-top: 10px;
+			margin-left: 5px;
+
+			.listy {
+				//border: 1px solid red;
+				flex: 1 1 auto;
+				//max-height: 400px;
+
+				//.listyGroup {
+				}
+				.listyGroup .listyGroup {
+					margin-left: 15px;
+				}
+				.listyItem {
+					padding-top: 5px;
+					list-style-type: none;
+				}
+				.listyGroupHeader {
+					font-size: 1em;
+				}
+				.listyNoDataMessage {
+					text-align: center;
+					margin-top: 40px;
+					color: gray;
+					font-size: 2em;
+					font-style: italic;
+				}
+			}
+			.debugDetailBox {
+				margin-top: 20px;
+			}
+		}
+	}
+	.topologyGraphDebugPanel {
+		margin: 5px;
+		background-color: #ECF1EF;
+	}
+	.topologyDebugRawJSON {
+		margin: 5px;
+		padding: 5px;
+		border: 1px dashed gray;
+	}
+	svg {
+		.gnode {
+			cursor: pointer;
+
+			circle {
+				stroke: steelblue;
+				stroke-width: 1.5px;
+			}
+		}
+		.link {
+			fill: none;
+			stroke: gray;
+			stroke-width: 1.5px;
+
+		}
+	}
+	svg.topology {
+		.gnode {
+			cursor: pointer;
+
+			circle {
+				fill: white;
+				stroke: steelblue;
+				stroke-width: 1.5px;
+			}
+		}
+		.node-group-1 {
+			circle {
+				fill: green;
+			}
+		}
+		.node-group-2 {
+			circle {
+				fill: yellow;
+			}
+		}
+		.node-group-3 {
+			circle {
+				fill: red;
+			}
+		}
+		.node-group-4 {
+			circle {
+				fill: blue;
+			}
+		}
+		.node-group-5 {
+			circle {
+				fill: orange;
+			}
+		}
+		.link {
+			fill: none;
+			stroke: gray;
+			stroke-width: 1.5px;
+		}
+		.legend {
+
+		}
+	}
+	.reloadButton {
+		//TODO: Style this button
+	}

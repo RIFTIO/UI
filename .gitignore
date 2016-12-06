@@ -1,0 +1,8 @@
+.DS_Store/
+.DS_Store
+err.log
+out.log
+node_modules/
+npm-debug.log
+fixtures/
+.build

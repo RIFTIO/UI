@@ -1,0 +1,156 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import "style/_colors.scss";
+
+.CatalogCard {
+    position:relative;
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-align: start;
+        align-items: flex-start;
+    background-color: #fff;
+    margin: 0rem 1rem;
+    margin-bottom: 1rem;
+    min-width: 350px;
+    max-width: 350px;
+    height:125px;
+    border-radius: 8px;
+    padding:0.5rem;
+    cursor:pointer;
+    &-thumbnail {
+        margin-right: 0.5rem;
+            max-width: 2rem;
+    max-height: 2rem;
+    }
+    &-button {
+        font-size:1.25rem;
+        cursor:pointer;
+    }
+    &-body {
+        -ms-flex:1;
+            flex:1;
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-direction:column;
+            flex-direction:column;
+        -ms-flex-pack:justify;
+            justify-content:space-between;
+        height: 100%;
+        font-size:0.75rem;
+    }
+    &-name {
+        font-size:1rem;
+    }
+    &-info{
+        position:relative;
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-align: center;
+            align-items: center;
+        border-bottom: 1px solid $dark-gray;
+        width:-webkit-fit-content;
+        width:-moz-fit-content;
+        width:fit-content;
+        cursor:pointer;
+        dd {
+            margin:0 1rem 0 0.5rem;
+            &:nth-last-child(2) {
+                margin-right:0;
+            }
+        }
+        .details {
+            display:none;
+            top: 1.125rem;
+            left: 0;
+            width:100%;
+            z-index:2;
+            background:white;
+            border:1px solid $dark-gray;
+            padding:0.5rem;
+            padding-top: 1rem;
+            &-section {
+                margin-bottom:0.75rem;
+                color:black;
+
+                &-title{
+                    margin-bottom:0.5rem;
+                    font-weight:bold;
+                    color:black;
+                }
+                &-item{
+                    display:-ms-flexbox;
+                    display:flex;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    margin:0.25rem 0rem;
+                    color:black;
+
+                    img {
+                        width:1.5rem;
+                        height:1.5rem;
+                        margin-right:0.25rem;
+                    }
+                }
+            }
+        }
+        &.CatalogCard-info--expanded {
+            .details{
+                position:absolute;
+                display:-ms-flexbox;
+                display:flex;
+                -ms-flex-direction:column;
+                    flex-direction:column;
+            }
+        }
+    }
+    &-is-selected {
+        outline: 2px dashed $brand-blue;
+        outline-offset: 2px;
+        cursor: pointer;
+    }
+    &:hover {
+        background-color: #7e9bc1;
+        /* background-color: $brand-blue-dark;*/
+        color:white;
+
+        .CatalogCard-info {
+            border-bottom: 1px solid white;
+        }
+
+    }
+    &-is-active {
+        /* &:before {*/
+        /*     content: '';*/
+        /*     position:absolute;*/
+        /*     height:125px;*/
+        /*     width:10px;*/
+        /*     left:-10px;*/
+        /*     background-color:#7e9bc1;*/
+        /*     /* background-color:$brand-blue-dark;*/
+        /* }*/
+    }
+    &-name {
+        font-weight:bold;
+    }
+    &-subtitle {
+        margin-top:0.25rem;
+    }
+    &-description {
+        margin:0.5rem 0;
+    }
+}

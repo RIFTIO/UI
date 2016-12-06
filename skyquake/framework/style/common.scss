@@ -1,0 +1,127 @@
+
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+
+@import '../../node_modules/open-iconic/font/css/open-iconic.css';
+@import './_colors.scss';
+
+$green: #31D2B1;
+$black: #2D3036;
+$white: #F8F9FC;
+$headers: #EFF5FE;
+$grey: #ABB6C6;
+
+/* Mixins */
+
+@mixin arrow($size, $color) {
+    width: 0;
+    height:0;
+    &--up {
+        border-left: $size solid transparent;
+        border-right: $size solid transparent;
+
+        border-bottom: $size solid $color;
+    }
+    &--down {
+        border-left: $size solid transparent;
+        border-right: $size solid transparent;
+
+        border-top: $size solid $color;
+    }
+    &--left {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+
+        border-right: $size solid $color;
+    }
+    &--right {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+
+        border-left: $size solid $color;
+    }
+}
+
+
+/* General */
+
+
+.crouton {
+    color: #FFF;
+    line-height: 140%;
+    border-radius: 3px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    max-width: 700px;
+    width: 90%;
+    text-align: center;
+    z-index: 99999;
+    margin: 0 auto;
+    div {
+        padding: 20px;
+        &.info {
+            background-color: #1F8DD6;
+        }
+        &.success {
+            background-color: #50CD84;
+        }
+        &.warning {
+            background-color: #FF8859;
+        }
+        &.error {
+            background-color: #FF5F5F;
+        }
+        span {
+            display: block;
+            margin-bottom: 0;
+            margin-left: 0px;
+        }
+        .buttons {
+            text-align: right;
+            button {
+                &.btn, &.retry, &.close, &.cancel, &.ignore {
+                    padding: 0px;
+                    border: 1px solid transparent;
+                    border-radius: 3px;
+                }
+                &:hover {
+                    opacity: .75;
+                }
+                &.retry {
+                    border-color: #FFF;
+                }
+                &.btn {
+                    &.close {
+                        border-color: #FF5F5F;
+                        margin-left: 10px;
+                    }
+                }
+            }
+        }
+    }
+}
+.noticeSubText {
+    padding-bottom:0.5rem;
+    color:$darker-gray;
+    font-size:0.75rem;
+    &_right {
+        text-align:right;
+    }
+}

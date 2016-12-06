@@ -1,0 +1,245 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import 'style/_colors.scss';
+@mixin optional() {
+    /* height: 1.25rem;*/
+    /* margin-left: 0.5rem;*/
+    /* margin-top: 0.5rem;*/
+    -ms-flex: 0 1 auto;
+        flex: 0 1 auto;
+}
+.nsConfigPrimitiveContainer {
+    -ms-flex: 1 0 100%;
+        flex: 1 0 100%;
+        .scrollContainer {
+            overflow-y:auto;
+        }
+}
+.nsConfigPrimitives {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex: 1 1 100%;
+        flex: 1 1 100%;
+    -ms-flex-direction: column;
+        flex-direction: column;
+    background: white;
+    .launchpadCard_title {
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+        min-height: 1rem;
+    }
+    .configuring {
+        pointer-events: none;
+        opacity: 0.3;
+    }
+    .nsConfigPrimitiveTabs {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex:1 1 auto;
+            flex:1 1 auto;
+        -ms-flex-direction:column;
+            flex-direction:column;
+            h4{
+                padding-bottom: 0.25rem;
+            }
+    }
+    .react-tabs {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex: 1 0 auto;
+            flex: 1 0 auto;
+
+        [role=tablist] {
+            border: 0px;
+            margin: 0px;
+            padding-top: 1rem;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex: 1 1 40%;
+                flex: 1 1 40%;
+            -ms-flex-direction: column;
+                flex-direction: column;
+            background-color: rgb(221, 221, 221);
+
+            [role=tab] {
+                padding: 1rem;
+            }
+            [role=tab]:hover {
+                background-color: #7e9bc1;
+            }
+            [role=tab][aria-selected=true] {
+                border: 0px;
+                border-radius: 0px;
+                position: relative;
+
+                &:before {
+                    display: block;
+                    position: absolute;
+                    content: ' ';
+                    top: -.125rem;
+                    left: 0rem;
+                    width: 100%;
+                    border-top: 1px dashed #00acee;
+                }
+                &:after {
+                    display: block;
+                    position: absolute;
+                    content: ' ';
+                    bottom: -.125rem;
+                    left: 0rem;
+                    width: 100%;
+                    border-bottom: 1px dashed #00acee;
+                }
+            }
+            [role=tab]:focus {
+                box-shadow: none;
+                border: 0px;
+            }
+            [role=tab]:focus:after {
+                display: none;
+            }
+        }
+        [role=tabpanel] {
+            -ms-flex: 1 1 auto;
+                flex: 1 1 auto;
+            margin-top: 1rem;
+            padding: 1rem;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+                flex-direction: column;
+            -ms-flex-pack: start;
+                justify-content: flex-start;
+            h2 {
+                padding-bottom: 0.5rem;
+            }
+            h3 {
+                padding: 0.5rem;
+                margin-left: 1rem;
+                font-weight: bold;
+            }
+            .noticeSubText {
+                padding-bottom:0.5rem;
+                color:$darker-gray;
+                font-size:0.75rem;
+                &_right {
+                    text-align:right;
+                }
+            }
+            .parameterGroup {
+                /* margin-left: 2rem;*/
+                >li {
+                }
+                label {
+                    &[data-required="true"] span:after {
+                        content: '*';
+                    }
+                    &.disabled {
+                    }
+                    input {
+                        &[disabled] {
+                            background:#ccc;
+                        }
+                    }
+                    .optional {
+                        @include optional();
+                    }
+                    span {
+                        font-weight: bolder;
+                    }
+                    .readonly {
+                        -ms-flex: 0 0 30%;
+                            flex: 0 0 30%;
+                        height: 1.25rem;
+                        margin: 0.125rem 0 0.5rem 0;
+                    }
+                }
+            }
+            .nsConfigPrimitiveParameterGroupParameters {
+                position:relative;
+                margin-bottom:2.5rem;
+                div {
+                    display:-ms-flexbox;
+                    display:flex;
+                    -ms-flex-direction:column;
+                        flex-direction:column;
+                }
+                .configGroupOverlay {
+                    background: #ccc;
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    opacity: 0.5;
+                }
+                &:after {
+                }
+                ul {
+                    width:100%;
+                }
+            }
+            .nsConfigPrimitiveParameters {
+
+                label {
+                    &[data-required="true"] span:after {
+                        content: '*';
+                    }
+                    .optional {
+                        @include optional();
+                    }
+                }
+                ul {
+                    width:100%;
+                }
+            }
+            .inputGroup{
+                display:-ms-flexbox;
+                display:flex;
+                -ms-flex:1 1 auto;
+                    flex:1 1 auto;
+                -ms-flex-align:center;
+                    align-items:center;
+            }
+        }
+        button {
+            margin-top: 0.5rem;
+        }
+    }
+}
+.nsConfigPrimitiveJobList {
+            -ms-flex: 1 1 80%;
+                flex: 1 1 80%;
+
+    .listView {
+        padding: 0.1rem;
+        overflow-y: auto;
+
+        >div>div {
+            margin:0.5rem;
+            >.tree-view_item {
+                padding: 1rem;
+            }
+            &:nth-child(odd) {
+                background:white;
+            }
+        }
+
+        .tree-view_children {
+            margin-left: 2rem;
+        }
+    }
+}

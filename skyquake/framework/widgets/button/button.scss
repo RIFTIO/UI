@@ -1,0 +1,270 @@
+
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import '../../style/_colors.scss';
+@import '../../style/variables.scss';
+
+button{
+    color: #000000;
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.75rem 3rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    margin:0 1rem;
+  &.light {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-top: 0;
+    &.small {
+      padding:0.25rem 1rem;
+    }
+  }
+
+  &.dark {
+    background-color: #333333;
+    border: 1px solid #000000;
+    border-top: 0;
+    color: #ffffff;
+    &:hover,&:active {
+      background: #00acee;
+      color: #ffffff;
+    }
+  }
+
+
+}
+
+/* IMPORTS
+############################################################################ */
+
+
+
+
+/* BUTTON
+############################################################################ */
+
+.SqButton {
+  align-items: center;
+  border-style: solid;
+  border-radius: 3px;
+  border-width: 0px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  height: 50px;
+  justify-content: center;
+  margin: 0 10px;
+  outline: none;
+  padding: 0 15px;
+  text-transform: uppercase;
+  transition: $transition;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  /* Button Content */
+  &-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: $transition;
+    white-space: nowrap;
+  }
+
+  /* Button Icon */
+  &-icon {
+    transition: $transition;
+  }
+
+  /* Spacing between content and icon when icon is on the right */
+  &-icon + &-content {
+    margin-left: 10px;
+  }
+
+  /* Spacing between content and icon when icon is on the left */
+  &-content + &-icon {
+    margin-left: 10px;
+  }
+
+  /* Focus */
+  &:focus {
+    // box-shadow: $focus-shadow;
+    border: 1px solid red;
+  }
+
+  /* SIZES
+  ############################################################################ */
+
+  &--large {
+    width: 250px;
+  }
+
+  &--medium {
+    width: 175px;
+  }
+
+  &--small {
+    width: 85px;
+  }
+
+  /* NORMAL
+  ############################################################################ */
+
+  /* Base */
+  &--normal {
+    background: $normalBackground;
+    border-color: darken($normalBackground, 10%);
+
+    .SqButton-content {
+      color: $normalForeground;
+    }
+
+    .SqButton-icon {
+      fill: $normalForeground;
+    }
+  }
+
+  /* Hover */
+  &--normal:hover {
+    background: $normalHoverBackground;
+    border-color: darken($normalHoverBackground, 10%);
+
+    .SqButton-content {
+      color: $normalHoverForeground;
+    }
+
+    .SqButton-icon {
+      fill: $normalHoverForeground;
+    }
+  }
+
+  /* Active */
+  &--normal:active {
+    background: $normalActiveBackground;
+    border-color: darken($normalActiveBackground, 10%);
+
+    .SqButton-content {
+      color: $normalActiveForeground;
+    }
+
+    .SqButton-icon {
+      fill: $normalActiveForeground;
+    }
+  }
+
+  /* Disabled */
+  &--normal.is-disabled {
+    cursor: default;
+    opacity: .55;
+  }
+
+  &--normal:hover.is-disabled,
+  &--normal:active.is-disabled {
+    background: $normalBackground;
+    border-color: darken($normalBackground, 10%);
+
+    .SqButton-content {
+      color: $normalForeground;
+    }
+
+    .SqButton-icon {
+      fill: $normalForeground;
+    }
+  }
+
+
+  /* PRIMARY
+  ############################################################################ */
+
+  /* Base */
+  &--primary {
+    background: $primaryBackground;
+    border-color: darken($primaryBackground, 10%);
+
+    .SqButton-content {
+      color: $primaryForeground;
+    }
+
+    .SqButton-icon {
+      fill: $primaryForeground;
+    }
+  }
+
+  /* Hover */
+  &--primary:hover {
+    background: $primaryHoverBackground;
+    border-color: darken($primaryHoverBackground, 10%);
+
+    .SqButton-content {
+      color: $primaryHoverForeground;
+    }
+
+    .SqButton-icon {
+      fill: $primaryHoverForeground;
+    }
+  }
+
+  /* Active */
+  &--primary:active {
+    background: $primaryActiveBackground;
+    border-color: darken($primaryActiveBackground, 10%);
+
+    .SqButton-content {
+      color: $primaryActiveForeground;
+    }
+
+    .SqButton-icon {
+      fill: $primaryActiveForeground;
+    }
+  }
+
+  /* Disabled */
+  &--primary.is-disabled {
+    cursor: default;
+    opacity: .55;
+  }
+
+  &--primary:hover.is-disabled,
+  &--primary:active.is-disabled {
+    background: $primaryBackground;
+    border-color: darken($primaryBackground, 10%);
+
+    .SqButton-content {
+      color: $primaryForeground;
+    }
+
+    .SqButton-icon {
+      fill: $primaryForeground;
+    }
+  }
+
+
+}
+
+
+
+
+
+
+
+
+

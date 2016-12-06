@@ -1,0 +1,302 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import "style/_colors.scss";
+.Accounts {
+    -ms-flex: 1 1 100%;
+        flex: 1 1 100%;
+
+    .refreshStatus {
+        margin-left: 0.5rem;
+        padding: 1rem 0;
+
+        .currentStatus {
+            text-transform: uppercase;
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-line-pack:center;
+                align-content:center;
+        }
+        span.oi {
+            cursor: pointer;
+        }
+    }
+    .delete, .cancel {
+        cursor: pointer;
+    }
+    .associateSdnAccount {
+        margin: 1rem;
+    }
+    .create > .flex-row > li {
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+        margin: 0 .25rem;
+    }
+    .create > .flex-row > li:first-child {
+        margin-left: .5rem;
+    }
+    .create > .flex-row > li:last-child {
+        margin-right: .5rem;
+    }
+    /* .flex-row > li h3 {*/
+    /*     background-color: #ffffff;*/
+    /*     padding: 12px 18px;*/
+    /*     text-transform: uppercase;*/
+    /* }*/
+    .create .options {
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+        text-align: center;
+        margin: 24px auto;
+        width: 90%;
+        flex-wrap: wrap;
+        margin: 24px auto;
+        width: 90%;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    }
+    .create .options a {
+        background-color: #ffffff;
+        -ms-flex: 0 1 32%;
+            flex: 0 1 32%;
+        margin: 0 4px 4px 0;
+        padding: 4px;
+        box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+    }
+    .create .options a h5 {
+        font-size: 10px;
+        margin: 5px 0 0 5px;
+        text-align: left;
+    }
+    .create .options a img {
+        margin-top: 10px;
+        width: 70%;
+    }
+    .list-pools {
+        padding: 24px;
+    }
+    .list-pools li a {
+        background-color: #ffffff;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 24px;
+        padding: 12px;
+        text-align: center;
+        box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+    }
+    .list-pools li h4 {
+        text-align: left;
+    }
+    .list-pools li img {
+        margin-top: 24px;
+        width: 65%;
+    }
+    .form-actions {
+        clear: both;
+        margin-top: 36px;
+        text-align: center;
+    }
+    .form-actions a {
+        color: #000000;
+        display: inline-block;
+        font-size: 12px;
+        padding: 8px 64px;
+        text-decoration: none;
+        text-transform: uppercase;
+        box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+    }
+    .form-actions a.save {
+        background-color: #ffffff;
+        border: 1px solid #cccccc;
+        border-top: 0;
+        cursor: pointer;
+        margin-right: 48px;
+    }
+    .form-actions a.launch {
+        background-color: #333333;
+        border: 1px solid #000000;
+        border-top: 0;
+        color: #ffffff;
+    }
+    .form-actions a.launch:hover, .form-actions a.launch:active {
+        background: #00acee;
+        color: #ffffff;
+    }
+    .create .select-type {
+        margin: 0.5rem;
+    }
+    /* .create-fleet-pool label {*/
+    /*     padding: 0.125rem;*/
+    /*     display: block;*/
+    /* }*/
+    /* .create-fleet-pool input {*/
+    /*     width: 350px;*/
+    /*     height: 35px;*/
+    /*     margin: 0px 20px 10px 15px;*/
+    /*     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #ffffff, 0 1px 0 #ffffff;*/
+    /*     font-size: 20px;*/
+    /* }*/
+    .create .optional {
+        font-style: italic;
+    }
+    .name-input input {
+      background:white !important;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #ffffff, 0 1px 0 #ffffff;
+      display: block;
+      font-size: 120%;
+      height: 35px;
+      margin: 0;
+      margin-top: 0.25rem;
+      width: 350px;
+    }
+    .select-type {
+        display:-ms-flexbox;
+        display:flex;
+    }
+    .accountSelection {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex:0 1;
+            flex:0 1;
+        position:relative;
+        -ms-flex-direction:column;
+        flex-direction:column;
+        margin-right:0.5rem;
+        -ms-flex-align:center;
+        align-items:center;
+        border-top:$gray-light 1px solid;
+        border-left:$gray-light 1px solid;
+        border-right:$gray-dark 1px solid;
+        border-bottom:$gray-dark 1px solid;
+        box-shadow: $gray 2px 2px 3px;
+        cursor:pointer;
+        background:white;
+        &:last-child {
+            margin-right:0;
+        }
+
+        input[type="radio"] {
+            opacity: 0.01;
+            position:absolute;
+            top:0;
+        }
+        &-imageWrapper {
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-direction:column;
+                flex-direction:column;
+            margin:0.5rem;
+            padding:0.25rem;
+            background:white;
+            width:100px;
+            height:50px;
+            -ms-flex-align:center;
+                align-items:center;
+            -ms-flex-pack:center;
+                justify-content:center;
+            img{
+                max-width:100px;
+                max-height:50px;
+            }
+        }
+        span {
+            padding-bottom:0.5rem;
+        }
+        &-overlay {
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+            height:100%;
+            width:100%;
+            background: rgba(0, 0, 0, 0.25);
+            opacity: 0.2;
+        }
+        &--isSelected{
+            border-bottom:$gray-light 1px solid;
+            border-right:$gray-light 1px solid;
+            border-top:$gray-dark 1px solid;
+            border-left:$gray-dark 1px solid;
+            box-shadow: $gray 2px 2px 3px inset;
+        }
+    }
+    .accountForm {
+        margin:0.5rem 0;
+        width:100%;
+        background: $gray-lighter;
+        &-title {
+            background-color: #ffffff;
+            padding: 12px 0.5rem;
+            text-transform: uppercase;
+            &--edit {
+                display:-ms-flexbox;
+                display:flex;
+                -ms-flex-pack:justify;
+                    justify-content:space-between;
+                -ms-flex-align: center;
+                    align-items: center;
+                >div {
+                    display:-ms-flexbox;
+                    display:flex;
+                    -ms-flex-align:center;
+                        align-items:center;
+                }
+            }
+        }
+        img {
+            height:2rem;
+            margin:0 0.5rem;
+        }
+        &-content {
+            padding:0.5rem;
+        }
+        &-nestedParams {
+            display:-ms-flexbox;
+            display:flex;
+            > label {
+                margin-right:0.5rem;
+            }
+            > label:last-child {
+                margin-right:0rem;
+            }
+
+        }
+    }
+    .connectivityStatus {
+        display:block;
+        border:1px solid $lightest-gray;
+        border-radius:50%;
+        width:0.5rem;
+        height:0.5rem;
+        margin-right: 0.25rem;
+        margin-top: 0;
+        background:$lightest-gray;
+        &--success {
+            background:$brand-green;
+        }
+        &--failure {
+            background:$error-red;
+        }
+    }
+    .refreshList {
+        padding: 0.5rem;
+        margin: 0;
+        cursor: pointer;
+        text-transform:uppercase;
+    }
+}

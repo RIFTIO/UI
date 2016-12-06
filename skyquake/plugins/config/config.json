@@ -1,0 +1,15 @@
+{
+    "root": "public",
+    "name": "RO Config",
+    "dashboard": "./dashboard/dashboard.jsx",
+    "order": 4,
+    "priority":1,
+    "routes": [
+    {
+        "label": "RO Configuration Dashboard",
+        "route": "accounts",
+        "component": "./dashboard/dashboard.jsx",
+        "path": "accounts",
+        "type": "internal"
+    }]
+}

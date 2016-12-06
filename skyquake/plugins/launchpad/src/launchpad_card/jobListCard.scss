@@ -1,0 +1,86 @@
+@import 'style/_colors.scss';
+
+.jobListCard {
+    background:white;
+    border-radius: 5px;
+    padding:0.5rem;
+    margin:0.5rem;
+    &--header {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin-bottom:0.25rem;
+    }
+    &--subtitle {
+        color:$darker-gray;
+        font-size:0.75rem;
+        margin-bottom:0.125rem;
+    }
+    &--status {
+        height: 0.75rem;
+        width: 0.75rem;
+        border-radius:50%;
+        &_red {
+            background:red;
+            border-color:red;
+        }
+        &_green {
+            background:green;
+            border-color:green;
+        }
+        &_yellow {
+            background:yellow;
+            border-color:yellow;
+        }
+    }
+    &--parameters {
+        font-size:0.75rem;
+        h4 {
+            padding-bottom:0.5rem;
+            text-decoration:underline;
+            cursor:pointer;
+        }
+
+    }
+    &--list {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-wrap:wrap;
+            flex-wrap:wrap;
+    }
+    &--listitem {
+        -ms-flex: 1 1 48%;
+            flex: 1 1 48%;
+        margin:0.125rem;
+    }
+    &--listname {
+        -ms-flex:1 1 100%;
+            flex:1 1 100%;
+    }
+    &--parameter {
+        color:$darker-gray;
+    }
+    &--details {
+        font-size:0.75rem;
+        h4 {
+            padding-bottom:0.5rem;
+            text-decoration:underline;
+            cursor:pointer;
+        }
+        &--content {
+            height: 26em;
+            overflow-y: scroll;
+            padding: 1em;
+        }
+        &--close {
+            text-align: center;
+            margin-top: 3em;
+        }
+
+    }
+}

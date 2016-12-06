@@ -1,0 +1,149 @@
+
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+html, body {
+  height:100%;
+  width:100%;
+}
+.flex {
+  display:-ms-flexbox;
+  display:flex;
+  &-column {
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-direction:column;
+        flex-direction:column;
+  }
+  &.space-between {
+    -ms-flex-pack:justify;
+        justify-content:space-between;
+  }
+}
+.layout-col {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+        flex-direction: column;
+    box-sizing: border-box;
+    -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+    &_left {
+      -ms-flex: 1 1 70%;
+          flex: 1 1 70%;
+    }
+    &_right {
+      -ms-flex: 0 1 30%;
+          flex: 0 1 30%;
+    }
+  }
+
+.app-body {
+  width:100%;
+  /*height:100%;*/
+  display:-ms-flexbox;
+  display:flex;
+  -ms-flex-direction:column;
+      flex-direction:column;
+  -ms-flex-pack:start;
+      justify-content:flex-start;
+  -ms-flex-align:stretch;
+      align-items:stretch;
+  -ms-flex-line-pack: stretch;
+      align-content: stretch;
+  margin:0px;
+}
+
+.header-app h1 {
+  /* background: url('../../../../assets/img/header-logo.png') no-repeat left center !important;*/
+  height: 51px;
+  line-height: 51px;
+  margin-left: 80px;
+  padding-left: 118px;
+  position: absolute;
+  left: 0;
+  text-transform: uppercase;
+}
+
+
+html, body, .application{
+    margin:0px;
+   height:100%;
+}
+
+.wrap {
+  height: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  .content-wrapper {
+    height:100%;
+    overflow-y:auto;
+  }
+}
+
+.application{
+  display:-ms-flexbox;
+  display:flex;
+  -ms-flex:1 1 auto;
+      flex:1 1 auto;
+  -ms-flex-direction:column;
+      flex-direction:column;
+  height:auto;
+  overflow:auto;
+}
+
+
+.content {
+  display:-ms-flexbox;
+  display:flex;
+  -ms-flex-direction:column;
+      flex-direction:column;
+}
+.panel {
+  display:-ms-flexbox;
+  display:flex;
+  margin:0.25rem;
+  border:1px solid black;
+  border-offset: -1px;
+  /*flex:1 1 auto;*/
+  &--container {
+    padding:0.25rem;
+  }
+  &--column {
+    -ms-flex-direction:column;
+        flex-direction:column;
+  }
+  &--grow {
+    -ms-flex:1;
+        flex:1;
+  }
+  &--wrap {
+    -ms-flex-wrap:wrap;
+        flex-wrap:wrap;
+  }
+}
+.card {
+
+}
+.size-2 {
+ -ms-flex: 1 1 20%;
+     flex: 1 1 20%;
+}
+.size-5 {
+ -ms-flex: 1 1 50%;
+     flex: 1 1 50%;
+}

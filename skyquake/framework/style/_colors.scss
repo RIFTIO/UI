@@ -1,0 +1,124 @@
+
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+
+$darker-gray: rgb(91,91,91);
+$dark-gray: rgb(211, 211, 211);
+$lightest-gray: rgb(221,221,221);
+$light-green: rgb(147, 203, 67);
+$light-blue: rgb(0, 168, 235);
+$lighter-blue: rgb(159, 196, 244);
+
+
+$primary-header: $light-green;
+$secondary-header: $dark-gray;
+$body-color:$lightest-gray;
+
+$error-red:#FF5F5F;
+
+//PC
+
+$black: #000;
+$gray-lightest: #f1f1f1;
+$gray-lighter: #e5e5e5;
+$gray-light: #dadada;
+$gray: #ccc;
+$gray-dark: #999;
+$gray-darker: #666;
+$gray-darkest: #333;
+$white: #FFF;
+//
+// Brand Colors
+//
+$brand-blue-light: #30baef;
+$brand-blue: #00acee;
+$brand-blue-dark: #147ca3;
+$brand-green-light: #93cb43;
+$brand-green: #7cc118;
+
+
+/*
+    New Styles. Phase out old above
+*/
+
+/* NEUTRL
+############################################################################ */
+
+$neutral-white: hsl( 0, 100%, 100%);
+$neutral-light-1: hsl(360, 100%, 50%);
+$neutral-light-2: hsl(360, 100%, 50%);
+$neutral-light-3: hsl(360, 100%, 50%);
+$neutral-light-4: hsl(360, 100%, 50%);
+$neutral-light-5: hsl(360, 100%, 50%);
+
+$neutral-dark-1: hsl(360, 100%, 50%);
+$neutral-dark-2: hsl(360, 100%, 50%);
+$neutral-dark-3: hsl(360, 100%, 50%);
+$neutral-dark-4: hsl(360, 100%, 50%);
+$neutral-dark-5: hsl(360, 100%, 50%);
+$netral-black: hsl(0, 100%, 0%);
+
+
+
+/* SUCCESS, WARNING, ALERT
+############################################################################ */
+
+$success: hsl(198, 59%, 56%);
+$warning: hsl(39, 89%, 67%);
+$alert: hsl(5, 100%, 71%);
+
+
+
+/* ROOT
+############################################################################ */
+
+$header: hsl(218, 18%, 17%);
+$body: hsl(181, 6%, 95%);
+
+
+
+/* BASE
+############################################################################ */
+
+$primary: hsl(204, 100%, 39%);
+$focus: hsla(204, 100%, 39%, 1);
+
+
+
+/* BUTTON
+############################################################################ */
+/* Normal */
+$normalBackground: hsl(211, 3%, 91%);
+$normalForeground: hsl(211, 3%, 11%);
+
+$normalHoverBackground: darken($normalBackground, 10%);
+$normalHoverForeground: $normalForeground;
+
+$normalActiveBackground: saturate($primary, 50%);
+$normalActiveForeground: $neutral-white;
+
+/* Primary */
+$primaryBackground: $primary;
+$primaryForeground: $neutral-white;
+
+$primaryHoverBackground: darken($primaryBackground, 10%);
+$primaryHoverForeground: $primaryForeground;
+
+$primaryActiveBackground: saturate($primary, 50%);
+$primaryActiveForeground: $neutral-white;
+

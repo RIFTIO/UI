@@ -1,0 +1,419 @@
+/*
+ * 
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+@import "style/_colors.scss";
+@import '../../node_modules/open-iconic/font/css/open-iconic.css';
+.app-body {
+  >header {
+    padding: 20px 0px;
+/*
+    h1 {
+      background: url('../../../assets/img/header-logo.png') no-repeat;
+      height: 51px;
+      line-height: 51px;
+      margin-left: 80px;
+      padding-left: 118px;
+      left: 0;
+      text-transform: uppercase;
+      font-size: 1.625rem;
+      font-weight: 400;
+    }
+    */
+  }
+  &.recordView{
+    -ms-flex:1;
+        flex:1;
+  }
+  .header-nav {
+    margin: 0rem 1.25rem 1.25rem;
+
+    a {
+      cursor: pointer;
+      margin-left: 0.5rem;
+      font-weight: normal;
+      color: black;
+    }
+    .spacer {
+      padding: 0 0.5rem;
+    }
+    .current {
+      font-weight: bold;
+    }
+  }
+  .recordViewer {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+        flex-direction: row;
+    -ms-flex-pack: start;
+        justify-content: flex-start; /* align items in Main Axis */
+    -ms-flex-align: stretch;
+        align-items: stretch; /* align items in Cross Axis */
+    -ms-flex-line-pack: stretch;
+        align-content: stretch;
+    -ms-flex: 1;
+        flex: 1;
+    position: relative;
+    margin: 0.5rem;
+    min-width: 900px;
+
+    .recordPanels {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex: 1;
+          flex: 1;
+      -ms-flex-direction: row;
+          flex-direction: row;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+      -ms-flex-wrap: nowrap;
+          flex-wrap: nowrap;
+      -ms-flex-line-pack: stretch;
+          align-content: stretch;
+      padding: 0;
+      margin-top: 0.0725rem;
+    }
+    >div {
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+    }
+    pre.json {
+      white-space: pre-wrap;
+    }
+    header {
+      background-color: white;
+    }
+    .monitoringParams {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+      -ms-flex:1 0 auto;
+          flex:1 0 auto;
+      span {
+        text-align: center;
+        -ms-flex: 1 1 100%;
+            flex: 1 1 100%;
+        padding: 1rem;
+        font-size: 2rem;
+        display:block;
+      }
+      .mpSlide {
+        display:-ms-flexbox;
+        display:flex;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+        -ms-flex: 1 1 100%;
+            flex: 1 1 100%;
+      }
+    }
+    .recordNavigator.dashboardCard {
+      -ms-flex: 0 1;
+          flex: 0 1;
+      /* min-width: 300px;*/
+      /* max-width: 300px;*/
+      .nsr:before {
+        content: 'NSR: '
+      }
+      .vnfr:before {
+        content: 'VNFR: '
+      }
+      li {
+        cursor: pointer;
+        -ms-flex: 1 1 100%;
+            flex: 1 1 100%;
+      }
+      li:hover {
+        color: $brand-blue;
+      }
+    }
+    .recordCard.dashboardCard {
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+      min-width: 600px;
+      a {
+          cursor: pointer;
+          margin-left: 0.5rem;
+          font-weight: normal;
+          color: black;
+      }
+      .recordCard_content {
+        padding: 0rem 0;
+      }
+    }
+    .dashboardCard {
+      margin: 0;
+      height: auto;
+      width: auto;
+      -ms-flex: 1;
+          flex: 1;
+
+      .corner-accent {
+        display: none;
+      }
+      &_content {
+        border-right: $gray-dark 1px solid;
+        padding: 1rem 0.5rem;
+        overflow: auto;
+
+        &-body {
+        }
+        .empty {
+          min-height: 50px;
+          max-width:100%;
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex-pack: center;
+              justify-content: center;
+          -ms-flex-align: center;
+              align-items: center;
+        }
+      }
+      &:last-child {
+        .dashboardCard_content {
+          border-right: none;
+        }
+      }
+      .recordViewToggle {
+        position:absolute;
+        top:1.5rem;
+        right:0.5rem;
+        cursor:pointer;
+        display:-ms-flexbox;
+        display:flex;
+
+        &:before {
+        }
+        &.on:before{
+        }
+      }
+    }
+    .loading_content {
+      -ms-flex-pack: center;
+          justify-content: center;
+      -ms-flex-align: center;
+          -ms-grid-row-align: center;
+          align-items: center;
+    }
+    .recordDetails {
+      -ms-flex: 1 1 20%;
+          flex: 1 1 20%;
+      max-width:600px;
+      &-body{
+          background:#f5f2f0;
+          max-width: 600px;
+      }
+      &_content {
+        padding: 0;
+
+        pre {
+          margin: 0;
+        }
+      }
+    }
+    .launchpadCard_data-list.EPA-PARAMS {
+      height: auto;
+      width: auto;
+      overflow: visible;
+
+      h1 {
+        margin: 0 0 0 0.5rem;
+      }
+    }
+    .launchpadCard_title {
+          -ms-flex: 0 1 auto;
+              flex: 0 1 auto;
+          min-height: 1.25rem;
+    }
+    .nfvi-metrics {
+      -ms-flex:1 0 auto;
+          flex:1 0 auto;
+    }
+    .nfvi-metrics-tray {
+      height: auto;
+      min-height: 150px;
+    }
+    .line-scale-pulse-out-rapid {
+      -ms-flex-item-align: center;
+          align-self: center;
+    }
+    .configPrimitives {
+      display:-ms-flexbox;
+      display:flex;
+      -ms-flex-direction:column;
+          flex-direction:column;
+      -ms-flex: 1 0 auto;
+          flex: 1 0 auto;
+    }
+    .consoleUrls {
+      display:-ms-flexbox;
+      display:flex;
+      -ms-flex-direction:column;
+          flex-direction:column;
+      -ms-flex: 1 0 auto;
+          flex: 1 0 auto;
+    }
+    .consoleUrlsComponent {
+      display: flex;
+      flex: 1 1 auto;
+      .consoleUrlsList {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        li {
+          display: flex;
+          flex: 1 1 auto;
+          &.notice {
+            padding-top: 0.5rem;
+            font-size: 0.75rem;
+            color: $gray-darker;
+          }
+          .consoleLink {
+            cursor: pointer;
+            text-decoration: underline;
+          }
+          h3 {
+            align-self: flex-start;
+            flex: 1 1 auto;
+          }
+          a {
+            align-self: flex-end;
+            flex: 1 1 auto;
+          }
+        }
+      }
+    }
+    .cardSectionFooter {
+      -ms-flex: 1 1 100%;
+          flex: 1 1 100%;
+    }
+    .metricBars {
+      display:-ms-flexbox;
+      display:flex;
+      -ms-flex-direction:row;
+          flex-direction:row;
+      -ms-flex-wrap:wrap;
+          flex-wrap:wrap;
+      -ms-flex-pack: distribute;
+          justify-content: space-around;
+      h3 {
+        text-align:center;
+      }
+      .bar {
+        fill: $brand-blue-light;
+        stroke: black;
+      }
+      .y.axis {
+        .domain {
+          transform:scaleX(0.25);
+        }
+      }
+      .x.axis {
+        .domain {
+          transform:scaleY(0.25);
+        }
+      }
+    }
+    .placementGroups {
+      display:-ms-flexbox;
+      display:flex;
+      .sectionHeader {
+        width: 100%;
+        text-transform: uppercase;
+        padding-right: 0;
+        color: #000;
+        background: lightgray;
+        padding: 0.5rem;
+        border-top: 1px solid #f1f1f1;
+        border-bottom: 1px solid #f1f1f1;
+      }
+      .panel{
+        -ms-flex:1 1;
+            flex:1 1;
+        border-right: #999 1px solid;
+        &:last-child {
+          border-right:0px;
+        }
+        &-5{
+          -ms-flex-preferred-size:50%;
+              flex-basis:50%;
+        }
+      }
+      .vdupTable{
+        >div,>dl {
+          display:-ms-flexbox;
+          display:flex;
+          h4, dt, dd{
+            padding:0.5rem 0;
+            -ms-flex:1 1 50%;
+                flex:1 1 50%;
+          }
+          dd {
+            padding-left:1rem;
+            li {
+              cursor:pointer;
+              text-decoration:underline;
+            }
+          }
+        }
+        dl:nth-child(even) {
+          background:$white;
+        }
+        .vdup-title {
+          background: $gray-dark;
+          padding:0 0.5rem;
+        }
+        .nsrType dt, .vnfrType dt, .vduType dt{
+          border-right:1px solid $gray-dark;
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex-direction: column;
+              flex-direction: column;
+          -ms-flex-pack: center;
+              justify-content: center;
+        }
+        .nsrType{
+          dt>div:first-child{
+            padding-left:0.5rem;
+          }
+        }
+        .vnfrType{
+          dt>div:first-child{
+            padding-left:1rem;
+          }
+        }
+        .vduType{
+          dt>div:first-child{
+            padding-left:1.5rem;
+          }
+        }
+      }
+      .placementGroupDetails {
+          margin:0.5rem;
+        dt {
+          text-transform:uppercase;
+          color:$gray-dark;
+        }
+        dt, dd {
+          margin-bottom:0.5rem;
+        }
+      }
+    }
+  }
+}
