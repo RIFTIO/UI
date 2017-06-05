@@ -36,7 +36,7 @@ export default class LaunchpadCardCloudAccount extends React.Component {
         (<li key="nsr"><h3>NSR: {this.props.nsr['cloud-account']}</h3></li>)
       )
     }
-    this.props.nsr['vnfrs'].map(function(v,i) {
+    this.props.nsr['vnfrs'] && this.props.nsr['vnfrs'].map(function(v,i) {
       if(v.hasOwnProperty('cloud-account')) {
         status.push(
           (<li key={i}><h3>VNFR {v['short-name']}: {v['cloud-account']}</h3></li>)

@@ -23,7 +23,10 @@
 
 'use strict';
 
-import _ from 'lodash'
+import _isFunction from 'lodash/isFunction'
+import _isArray from 'lodash/isArray'
+import _isObject from 'lodash/isObject'
+import _cloneDeep from 'lodash/cloneDeep'
 import DescriptorTemplates from './DescriptorTemplates'
 import DescriptorModelMetaFactory from './DescriptorModelMetaFactory'
 
@@ -33,13 +36,13 @@ function resolveInitHandlers(model) {
 	function init(m) {
 		keys(m).map(key => {
 			const value = m[key];
-			if (_.isFunction(value)) {
+			if (_isFunction(value)) {
 				m[key] = value(m, key, model);
 			}
-			if (_.isArray(value)) {
+			if (_isArray(value)) {
 				value.forEach(v => init(v));
 			}
-			if (_.isObject(value)) {
+			if (_isObject(value)) {
 				init(value);
 			}
 		});
@@ -52,7 +55,7 @@ export default {
 	createModelForType(type) {
 		const template = DescriptorTemplates[type];
 		if (template) {
-			const model = _.cloneDeep(template);
+			const model = _cloneDeep(template);
 			return resolveInitHandlers(model);
 		}
 	}

@@ -251,7 +251,8 @@ module.exports = React.createClass({
         onKeyPress:        this.onKeyPress,
         onKeyUp:           this.onKeyUp,
         onFocus:           this.onFocus,
-        onBlur:            this.onBlur
+        onBlur:            this.onBlur,
+        disabled:          this.isDisabled, 
       },
       button_icon,
       React.createElement("span", {className: "rw-button__label"}, display)

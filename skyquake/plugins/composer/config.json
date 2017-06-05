@@ -1,4 +1,6 @@
 {
+    "copyright": "2016 RIFT.IO Inc",
+    "license": "Apache 2.0",
     "root": "public",
     "name": "Catalog",
     "dashboard" : "./src/components/ComposerApp.js",

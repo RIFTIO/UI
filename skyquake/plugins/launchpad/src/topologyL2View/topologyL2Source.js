@@ -41,7 +41,7 @@ export default {
             return resolve(false);
           }
            $.ajax({
-            url: '/socket-polling?api_server=' + API_SERVER ,
+            url: '/socket-polling?api_server=' + API_SERVER,
             type: 'POST',
             beforeSend: Utils.addAuthorizationStub,
             data: {

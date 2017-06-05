@@ -21,7 +21,7 @@
 /*global describe, beforeEach, it, expect, xit, xdescribe */
 
 'use strict';
-import _ from 'lodash'
+import _cloneDeep from 'lodash/cloneDeep'
 import DescriptorModelSerializer from '../../../src/libraries/model/DescriptorModelSerializer'
 import DescriptorModelFactory from '../../../src/libraries/model/DescriptorModelFactory'
 import SampleCatalogs from 'json!../../../src/assets/ping-pong-catalog.json'
@@ -34,7 +34,7 @@ describe('DescriptorModelFactory', () => {
 	describe('buildCatalogItemFactory', () => {
 		let containers;
 		beforeEach(() => {
-			const nsdJson = _.cloneDeep(SampleCatalogs[0].descriptors[0]);
+			const nsdJson = _cloneDeep(SampleCatalogs[0].descriptors[0]);
 			// the CatalogItemsStore adds the type to the uiState field when the catalog is loaded
 			nsdJson.uiState = {type: 'nsd'};
 			// the user will open a catalog item by dbl clicking on it in the ui that is when we
@@ -49,7 +49,7 @@ describe('DescriptorModelFactory', () => {
 			expect(result).toEqual([]);
 		});
 		it('parses an NSD object', () => {
-			const nsdJson = _.cloneDeep(SampleCatalogs[0].descriptors[0]);
+			const nsdJson = _cloneDeep(SampleCatalogs[0].descriptors[0]);
 			nsdJson.uiState = {type: 'nsd'};
 			const factory = DescriptorModelFactory.buildCatalogItemFactory(SampleCatalogs);
 			const result = [nsdJson].reduce(factory, [])[0];
@@ -68,7 +68,7 @@ describe('DescriptorModelFactory', () => {
 		});
 		describe('DescriptorModelSerializer', () => {
 			it('outputs the same JSON that was parsed by the .buildCatalogItemFactory method', () => {
-				const inputJSON = _.cloneDeep(TestCatalogs[0].descriptors[0]);
+				const inputJSON = _cloneDeep(TestCatalogs[0].descriptors[0]);
 				inputJSON.uiState = {type: 'nsd'};
 				const factory = DescriptorModelFactory.buildCatalogItemFactory(TestCatalogs);
 				const parsedModel = [inputJSON].reduce(factory, []);

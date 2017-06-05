@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,9 +22,14 @@ var rp = require('request-promise');
 var utils = require('../../../framework/core/api_utils/utils.js');
 var constants = require('../../../framework/core/api_utils/constants.js');
 var _ = require('underscore');
+var URL = require('url');
+var uuid = require('uuid');
 var APIVersion = '/v1';
-var Composer = {};
+var PackageFileHandler = require('./packageFileHandler.js');
 
+var Composer = {};
+var FileManager = {};
+var PackageManager = {};
 var DataCenters = {};
 // Catalog module methods
 Composer.get = function(req) {
@@ -268,7 +273,7 @@ Composer.create = function(req) {
         });
     });
 };
-Composer.update = function(req) {
+Composer.updateSave = function(req) {
     var api_server = req.query['api_server'];
     var catalogType = req.params.catalogType;
     var id = req.params.id;
@@ -297,5 +302,436 @@ Composer.update = function(req) {
             }
         });
     });
+}
+
+PackageManager.upload = function(req) {
+    console.log(' Uploading file', req.file.originalname, 'as', req.file.filename);
+    var api_server = req.query['api_server'];
+    // dev_download_server is for testing purposes.
+    // It is the direct IP address of the Node server where the
+    // package will be hosted.
+    var download_host = req.query['dev_download_server'];
+
+    if (!download_host) {
+        download_host = req.protocol + '://' + req.get('host');//req.api_server + ':' + utils.getPortForProtocol(req.protocol);
+    }
+
+    return new Promise(function(resolve, reject) {
+        Promise.all([
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/package-create',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true,
+                json: true,
+                body: {
+                    input: {
+                        'external-url': download_host + '/composer/upload/' + req.file.filename,
+                        'package-type': 'VNFD',
+                        'package-id': uuid()
+                    }
+                }
+            })
+        ]).then(function(result) {
+            var data = {};
+            data['transaction_id'] = result[0].body['output']['transaction-id'];
+
+            // Add a status checker on the transaction and then to delete the file later
+            PackageFileHandler.checkCreatePackageStatusAndHandleFile(req, data['transaction_id']);
+
+            // Return status to composer UI to update the status.
+            resolve({
+                statusCode: constants.HTTP_RESPONSE_CODES.SUCCESS.OK,
+                data: data
+            });
+        }).catch(function(error) {
+            var res = {};
+            console.log('Problem with PackageManager.upload', error);
+            res.statusCode = error.statusCode || 500;
+            res.errorMessage = {
+                error: 'Failed to upload package ' + req.file.originalname + '. Error: ' + error
+            };
+            reject(res);
+        });
+    });
 };
-module.exports = Composer;
+
+PackageManager.update = function(req) {
+    console.log(' Updating file', req.file.originalname, 'as', req.file.filename);
+    var api_server = req.query['api_server'];
+    // dev_download_server is for testing purposes.
+    // It is the direct IP address of the Node server where the
+    // package will be hosted.
+    var download_host = req.query['dev_download_server'];
+
+    if (!download_host) {
+        download_host = req.protocol + '://' + req.get('host');//api_server + ':' + utils.getPortForProtocol(req.protocol);
+    }
+    var input = {
+        'external-url': download_host + '/composer/update/' + req.file.filename,
+        'package-type': 'VNFD',
+        'package-id': uuid()
+    }
+    return new Promise(function(resolve, reject) {
+        Promise.all([
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/package-update',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true,
+                json: true,
+                body: {
+                    input: input
+                }
+            })
+        ]).then(function(result) {
+            var data = {};
+            data['transaction_id'] = result[0].body['output']['transaction-id'];
+
+            // Add a status checker on the transaction and then to delete the file later
+            PackageFileHandler.checkCreatePackageStatusAndHandleFile(req, data['transaction_id'], true);
+
+            // Return status to composer UI to update the status.
+            resolve({
+                statusCode: constants.HTTP_RESPONSE_CODES.SUCCESS.OK,
+                data: data
+            });
+        }).catch(function(error) {
+            var res = {};
+            console.log('Problem with Composer.upload', error);
+            res.statusCode = error.statusCode || 500;
+            res.errorMessage = {
+                error: 'Failed to upload package ' + req.file.originalname + '. Error: ' + error
+            };
+            reject(res);
+        });
+    });
+};
+
+PackageManager.export = function(req) {
+    // /api/operations/package-export
+    var api_server = req.query['api_server'];
+    return new Promise(function(resolve, reject) {
+        Promise.all([
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/package-export',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true,
+                json: true,
+                body: { "input": req.body}
+            })
+        ]).then(function(result) {
+            var data = {};
+            resolve({
+                statusCode: constants.HTTP_RESPONSE_CODES.SUCCESS.OK,
+                data: result[0].body
+            });
+        }).catch(function(error) {
+            var res = {};
+            console.log('Problem with PackageManager.export', error);
+            res.statusCode = error.statusCode || 500;
+            res.errorMessage = {
+                error: error
+            };
+            reject(res);
+        });
+    });
+}
+
+PackageManager.copy = function(req) {
+    // /api/operations/package-copy
+    var api_server = req.query['api_server'];
+    return new Promise(function(resolve, reject) {
+        Promise.all([
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/package-copy',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true,
+                json: true,
+                body: { "input": req.body}
+            })
+        ]).then(function(result) {
+            var data = {};
+            resolve({
+                statusCode: constants.HTTP_RESPONSE_CODES.SUCCESS.OK,
+                data: result[0].body
+            });
+        }).catch(function(error) {
+            var res = {};
+            console.log('Problem with PackageManager.copy', error);
+            res.statusCode = error.statusCode || 500;
+            res.errorMessage = {
+                error: error
+            };
+            reject(res);
+        });
+    });
+}
+
+/**
+ * This methods retrieves the status of package operations. It takes an optional 
+ * transaction id (id) this if present will return only that status otherwise
+ * an array of status' will be response.
+ */
+PackageManager.getJobStatus = function(req) {
+    var api_server = req.query["api_server"];
+    var uri = utils.confdPort(api_server);
+    var id = req.params['id'];
+    var url = uri + '/api/operational/copy-jobs' + (id ? '/job/' + id : '');
+    return new Promise(function(resolve, reject) {
+        request({
+            url: url,
+            method: 'GET',
+            headers: _.extend({}, constants.HTTP_HEADERS.accept.data, {
+                'Authorization': req.get('Authorization')
+            }),
+            forever: constants.FOREVER_ON,
+            rejectUnauthorized: false
+        }, function(error, response, body) {
+            if (utils.validateResponse('restconfAPI.streams', error, response, body, resolve, reject)) {
+                var returnData;
+                if (id) {
+                    returnData = JSON.parse(response.body)['rw-pkg-mgmt:job'];
+                } else {
+                    var data = JSON.parse(response.body)['rw-pkg-mgmt:copy-jobs'];
+                    returnData = (data && data.job) || [];
+                }
+                resolve({
+                    statusCode: response.statusCode,
+                    data: returnData
+                })
+            };
+        })
+    })
+}
+
+function makeAssetTypeParamName (type) {
+    return type.toLowerCase() + '-file-type';
+}
+FileManager.addFile = function(req) {
+    console.log(' Uploading file', req.file.originalname, 'as', req.file.filename);
+    var api_server = req.query['api_server'];
+    var download_host = req.query['dev_download_server'];
+    var package_id = req.query['package_id'];
+    var package_type = req.query['package_type'].toUpperCase();
+    var package_path = req.query['package_path'];
+     if (!download_host) {
+        download_host = req.protocol + '://' + req.get('host');//api_server + ':' + utils.getPortForProtocol(req.protocol);
+    }
+    var input = {
+        'external-url': download_host + '/composer/upload/' + req.query['package_id'] + '/' + req.file.filename,
+        'package-type': package_type,
+        'package-id': package_id,
+        'package-path': package_path ? package_path + '/' + req.file.filename : req.file.filename
+    }
+    var assetType = req.query['asset_type'].toUpperCase();
+    input[makeAssetTypeParamName(package_type)] = assetType;
+    return new Promise(function(resolve, reject) {
+        Promise.all([
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/package-file-add',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true,
+                json: true,
+                body: {
+                    input: input
+                }
+            })
+        ]).then(function(result) {
+            var data = {};
+            data['transaction_id'] = result[0].body['output']['task-id'];
+            resolve({
+                statusCode: constants.HTTP_RESPONSE_CODES.SUCCESS.OK,
+                data: data
+            });
+        }).catch(function(error) {
+            var res = {};
+            console.log('Problem with Composer.upload', error);
+            res.statusCode = error.statusCode || 500;
+            res.errorMessage = {
+                error: 'Failed to upload package ' + req.file.originalname + '. Error: ' + error
+            };
+            reject(res);
+        });
+    });
+}
+
+FileManager.get = function(req) {
+    var api_server = req.query['api_server'];
+    var type = req.query['package_type'] && req.query['package_type'].toUpperCase();
+    var id = req.query['package_id'];
+    var downloadUrl = req.query['url'];
+    var path = req.query['package_path'];
+    var assetType = req.query['asset_type'];
+    var input = {
+        "package-type": type,
+        "package-id": id
+    }
+    var payload = {input: input};
+    if(req.method == 'GET') {
+        if(downloadUrl && path) {
+            payload.input['external-url'] = downloadUrl;
+            payload.input['package-path'] = path;
+            payload.input[makeAssetTypeParamName(type)] = assetType;
+            return download(payload);
+        } else {
+            return list(payload);
+        }
+    }
+    if(req.method == 'DELETE') {
+        payload.input['package-path'] = path;
+        payload.input[makeAssetTypeParamName(type)] = assetType;
+        return deleteFile(payload)
+    }
+
+    function deleteFile(payload) {
+        return new Promise(function(resolve, reject) {
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/rw-pkg-mgmt:package-file-delete',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                json: payload,
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true
+            }).then(function(data) {
+                        if (utils.validateResponse('FileManager.delete', data.error, data, data.body, resolve, reject)) {
+                            resolve({
+                                statusCode: data.statusCode,
+                                data: data.body
+                            });
+                        }
+                    })
+        })
+    }
+    function download(payload) {
+        return new Promise(function(resolve, reject) {
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/rw-pkg-mgmt:package-file-add',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                json: payload,
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true
+            }).then(function(data) {
+                        if (utils.validateResponse('FileManager.get', data.error, data, data.body, resolve, reject)) {
+                            resolve({
+                                statusCode: data.statusCode,
+                                data: data.body
+                            });
+                        }
+                    })
+        })
+    }
+    function list(payload) {
+        return new Promise(function(resolve, reject) {
+            rp({
+                uri: utils.confdPort(api_server) + '/api/operations/get-package-endpoint',
+                method: 'POST',
+                headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                    'Authorization': req.get('Authorization')
+                }),
+                json: payload,
+                forever: constants.FOREVER_ON,
+                rejectUnauthorized: false,
+                resolveWithFullResponse: true
+            }).then(function(data) {
+                if (utils.validateResponse('FileManager.get', data.error, data, data.body, resolve, reject)) {
+                    var endpoint = null;
+                    var parsedEndpoint = null;
+                    try {
+                        endpoint = data.body.output.endpoint
+                    } catch(e) {
+                        console.log('Something went wrong with the FileManager.get data that was returned');
+                        reject({});
+                    }
+                    parsedEndpoint = URL.parse(endpoint);
+                    rp({
+                        uri: api_server + ':' + parsedEndpoint.port + parsedEndpoint.path,
+                        method: 'GET',
+                        headers: _.extend({}, constants.HTTP_HEADERS.accept.collection, {
+                            'Authorization': req.get('Authorization')
+                        }),
+                        forever: constants.FOREVER_ON,
+                        rejectUnauthorized: false,
+                        resolveWithFullResponse: true
+                    }).then(function(data) {
+                        if (utils.validateResponse('FileManager.get', data.error, data, data.body, resolve, reject)) {
+                            resolve({
+                                statusCode: data.statusCode,
+                                data: data.body
+                            });
+                        }
+                    }).catch(function(err) {
+                        console.log('Failed to retrieve FileManager.list')
+                        resolve(err);
+                    })
+                }
+            })
+        })
+    }
+}
+FileManager.job = function(req) {
+    var api_server = req.query["api_server"];
+    var uri = utils.confdPort(api_server);
+    var url = '/api/operational/download-jobs';
+    var id = req.params['id'];
+    return new Promise(function(resolve, reject) {
+        request({
+            url: uri + url + '?deep',
+            method: 'GET',
+            headers: _.extend({}, constants.HTTP_HEADERS.accept.data, {
+                'Authorization': req.get('Authorization')
+            }),
+            forever: constants.FOREVER_ON,
+            rejectUnauthorized: false,
+        }, function(error, response, body) {
+            if (utils.validateResponse('FileManager.job', error, response, body, resolve, reject)) {
+                var data = JSON.parse(response.body)['rw-pkg-mgmt:download-jobs'];
+                var returnData = [];
+                data && data.job.map(function(d) {
+                    if(d['package-id'] == id) {
+                        returnData.push(d)
+                    }
+                })
+                resolve({
+                    statusCode: response.statusCode,
+                    data: returnData
+                })
+            };
+        })
+    })
+}
+module.exports = {
+    Composer:Composer,
+    FileManager: FileManager,
+    PackageManager: PackageManager
+};

@@ -1,0 +1,171 @@
+/*
+ *
+ *   Copyright 2016 RIFT.IO Inc
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ */
+
+@import 'style/_colors.scss';
+
+.FileManager {
+    width:600px;
+    .skyquakePanel {
+        display:block;
+        -ms-flex:0;
+            flex:0;
+        &-wrapper {
+            height:auto;
+        }
+        &-body {
+            padding: 0.5rem;
+        }
+    }
+    .addFileSection {
+        background:$gray;
+        margin:1rem 0;
+        &-body {
+            padding-bottom: 1rem;
+        }
+        .inputSection {
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-align: end;
+            align-items: flex-end;
+            padding:0 0 0 0.5rem;
+            margin:0.5rem 0;
+            .sqTextInput {
+                margin-bottom:0rem;
+                input {
+                    font-size:10px;
+                    height:auto;
+                }
+            }
+            &:last-child {
+            }
+        }
+        .ComposerAppAddFile {
+            span {
+                color: black;
+            }
+        }
+    }
+    .tree-view {
+        margin:0 0.5rem;
+        margin-bottom: 0.5rem;
+         padding:0 0.5rem;
+         /* border-top:1px solid $gray-lightest;*/
+         /* border-left:0.5px solid $gray-lightest;*
+        /* border-bottom:1px solid white;*/
+        /* border: 1px solid rgba(143, 143, 143, 0.5);*/
+        /* background-color: rgba(147, 161, 161, 0.5);*/
+        border-radius: 3px;
+        font-size:10px;
+        &_item {
+            padding:0.5rem;
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-align: center;
+            align-items: center;
+            color: #586e75;
+            text-transform: uppercase;
+            font-size:10px;
+            background:white;
+        }
+        &_children {
+            margin-left:0;
+            /* background: $gray;*/
+            padding: 0.125rem;
+            margin-bottom: 0.5rem;
+            /* background: $gray-light;*/
+            &-collapsed {
+                height: 0px;
+                overflow: hidden;
+            }
+        }
+        &_arrow{
+            height: 2rem;
+            width: 2rem;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -ms-flex-align: center;
+            align-items: center;
+
+            margin-right: 6px;
+
+            font-size: 1.25rem;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            display:none;
+
+            &:after {
+                content: '\25BE';
+            }
+            &-collapsed {
+                transform: rotate(-90deg);
+            }
+        }
+    }
+    .folder {
+        /* margin:0.5rem 0.5rem;*/
+        /* padding: 0.5rem;*/
+        /* background-color: rgba(238, 232, 213, 0.33);*/
+        /* border-radius:3px;*/
+    }
+    .nested {
+        & + div {
+            & > div:not(.nested-alt):not(.folder) {
+                &:nth-child(even) {
+                    background: $gray-light;
+                }
+                &:nth-child(odd) {
+                    background: $gray;
+                }
+            }
+        }
+    }
+    .file {
+        margin: 0.5rem 0;
+        -ms-flex-pack:justify;
+        justify-content:space-between;
+        &-section {
+            display:-ms-flexbox;
+            display:flex;
+            -ms-flex-pack:justify;
+                justify-content:space-between;
+            &>div {
+                margin:0 0.5rem;
+            }
+        }
+        &-info{
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-pack: center;
+                justify-content: center;
+            -ms-flex-align: center;
+                align-items: center;
+        }
+        &-status {
+            padding-right:0.5rem;
+        }
+        &-name {
+            color:#586e75;
+        }
+    }
+}

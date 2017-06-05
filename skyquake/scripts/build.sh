@@ -38,7 +38,7 @@ for f in *; do
         npm install
         echo 'Fetching third-party node_modules for '$f'...done'
         echo 'Packaging '$f' using webpack'
-        ./node_modules/.bin/webpack --progress --config webpack.production.config.js
+        ./node_modules/.bin/webpack --optimize-minimize --progress --config webpack.production.config.js
         echo 'Packaging '$f' using webpack... done'
         cd ..
         echo 'Building plugin '$f'... done'

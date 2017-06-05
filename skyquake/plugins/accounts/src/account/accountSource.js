@@ -38,7 +38,7 @@ module.exports = function(Alt) {
                 return resolve(false);
               }
                $.ajax({
-                url: '/socket-polling?api_server=' + API_SERVER ,
+                url: '/socket-polling?api_server=' + API_SERVER,
                 type: 'POST',
                 beforeSend: Utils.addAuthorizationStub,
                 data: {
@@ -50,6 +50,7 @@ module.exports = function(Alt) {
               }).fail(function(xhr){
                 //Authentication and the handling of fail states should be wrapped up into a connection class.
                 Utils.checkAuthentication(xhr.status);
+                reject(xhr.responseText || 'An error occurred. Check your logs for more information');
               });;
             });
           },
@@ -133,7 +134,7 @@ module.exports = function(Alt) {
               }).fail(function(xhr){
                 //Authentication and the handling of fail states should be wrapped up into a connection class.
                 Utils.checkAuthentication(xhr.status);
-                reject();
+                reject(xhr.responseText || 'An error occurred. Check your logs for more information');
               });
 
             });
@@ -177,7 +178,7 @@ module.exports = function(Alt) {
               }).fail(function(xhr){
                 //Authentication and the handling of fail states should be wrapped up into a connection class.
                 Utils.checkAuthentication(xhr.status);
-                reject('error');
+                reject(xhr.responseText || 'An error occurred. Check your logs for more information');
               });
 
             });
@@ -204,7 +205,7 @@ module.exports = function(Alt) {
               }).fail(function(xhr){
                 //Authentication and the handling of fail states should be wrapped up into a connection class.
                 Utils.checkAuthentication(xhr.status);
-                reject('error');
+                reject(xhr.responseText || 'An error occurred. Check your logs for more information');
               });
             })
           },

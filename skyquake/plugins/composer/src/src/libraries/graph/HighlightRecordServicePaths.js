@@ -4,7 +4,7 @@
 
 'use strict';
 
-import _ from 'lodash'
+import _isArray from 'lodash/isArray'
 import d3 from 'd3'
 
 /**
@@ -26,7 +26,7 @@ export default class HighlightRecordServicePaths {
 		Array.from(document.querySelectorAll(`svg .forwarding-graph-paths`)).forEach(d => {
 			d3.select(d).classed('-is-highlighting', true);
 		});
-		const list = _.isArray(rsp) ? rsp : [rsp];
+		const list = _isArray(rsp) ? rsp : [rsp];
 		list.forEach(rsp => {
 			Array.from(document.querySelectorAll(`[data-id="${rsp.id}"]`)).forEach(d => {
 				d.parentNode.appendChild(d);

@@ -20,9 +20,15 @@
  *
  * This class generates the form fields used to edit the CONFD JSON model.
  */
-'use strict';
 
-import _ from 'lodash'
+import _includes from 'lodash/includes'
+import _isArray from 'lodash/isArray'
+import _cloneDeep from 'lodash/cloneDeep'
+import _debounce from 'lodash/debounce';
+import _uniqueId from 'lodash/uniqueId';
+import _set from 'lodash/set';
+import _get from 'lodash/get';
+import _has from 'lodash/has';
 import utils from '../libraries/utils'
 import React from 'react'
 import ClassNames from 'classnames'
@@ -39,19 +45,30 @@ import SelectionManager from '../libraries/SelectionManager'
 import DeletionManager from '../libraries/DeletionManager'
 import DescriptorModelIconFactory from '../libraries/model/IconFactory'
 import getEventPath from '../libraries/getEventPath'
+import CatalogDataStore from '../stores/CatalogDataStore'
 
 import imgAdd from '../../../node_modules/open-iconic/svg/plus.svg'
 import imgRemove from '../../../node_modules/open-iconic/svg/trash.svg'
 
 import '../styles/EditDescriptorModelProperties.scss'
 
+const EMPTY_LEAF_PRESENT = '--empty-leaf-set--';
+
+function resolveReactKey(value) {
+	const keyPath =  ['uiState', 'fieldKey'];
+	if (!_has(value, keyPath)) {
+		_set(value, keyPath, _uniqueId());
+	}
+	return _get(value, keyPath);
+}
+
 function getDescriptorMetaBasicForType(type) {
-	const basicPropertiesFilter = d => _.contains(DESCRIPTOR_MODEL_FIELDS[type], d.name);
+	const basicPropertiesFilter = d => _includes(DESCRIPTOR_MODEL_FIELDS[type], d.name);
 	return DescriptorModelMetaFactory.getModelMetaForType(type, basicPropertiesFilter) || {properties: []};
 }
 
 function getDescriptorMetaAdvancedForType(type) {
-	const advPropertiesFilter = d => !_.contains(DESCRIPTOR_MODEL_FIELDS[type], d.name);
+	const advPropertiesFilter = d => !_includes(DESCRIPTOR_MODEL_FIELDS[type], d.name);
 	return DescriptorModelMetaFactory.getModelMetaForType(type, advPropertiesFilter) || {properties: []};
 }
 
@@ -135,7 +152,10 @@ export default function EditDescriptorModelProperties(props) {
 				create(model, path, property);
 			} else {
 				const name = path.join('.');
-				const value = Property.createModelInstance(property);
+				// get a unique name for the new list item based on the current list content
+				// some lists, based on the key, may not get a uniqueName generated here
+				const uniqueName = DescriptorModelMetaFactory.generateItemUniqueName(container.model[property.name], property);
+				const value = Property.createModelInstance(property, uniqueName);
 				utils.assignPathValue(this.model, name, value);
 			}
 			CatalogItemsActions.catalogItemDescriptorChanged(this.getRoot());
@@ -162,27 +182,43 @@ export default function EditDescriptorModelProperties(props) {
 		);
 	}
 
-	function onFormFieldValueChanged(event) {
-		if (DescriptorModelFactory.isContainer(this)) {
-			event.preventDefault();
-			const name = event.target.name;
-			const value = event.target.value;
-			utils.assignPathValue(this.model, name, value);
-			CatalogItemsActions.catalogItemDescriptorChanged(this.getRoot());
-		}
-	}
-
 	function buildField(container, property, path, value, fieldKey) {
+		let cds = CatalogDataStore;
+		let catalogs = cds.getTransientCatalogs();
 
-		const name = path.join('.');
+		const pathToProperty = path.join('.');
 		const isEditable = true;
 		const isGuid = Property.isGuid(property);
-		const onChange = onFormFieldValueChanged.bind(container);
+		const isBoolean = Property.isBoolean(property);
 		const isEnumeration = Property.isEnumeration(property);
+		const isLeafRef = Property.isLeafRef(property);
 		const onFocus = onFocusPropertyFormInputElement.bind(container, property, path, value);
 		const placeholder = changeCase.title(property.name);
 		const className = ClassNames(property.name + '-input', {'-is-guid': isGuid});
-		const fieldValue = value ? (value.constructor.name != "Object") ? value : '' : undefined;
+		const fieldValue = value ? (value.constructor.name != "Object") ? value : '' : (isNaN(value) ? undefined : value);
+
+		// process the named field value change
+		function processFieldValueChange(name, value) {
+			console.debug('processed change for -- ' + name + ' -- with value -- ' + value);
+			// this = the container being edited
+			if (DescriptorModelFactory.isContainer(this)) {
+				utils.assignPathValue(this.model, name, value);
+				CatalogItemsActions.catalogItemDescriptorChanged(this.getRoot());
+			}
+		}
+
+		// change handler used for onChange event
+		const changeHandler = (handleValueChange, event) => {
+			event.preventDefault();
+			console.debug(event.target.value);
+			handleValueChange(event.target.value);
+		};
+		// create an onChange event handler for a text field for the specified field path (debounced to accumulate chars)
+		const onTextChange = changeHandler.bind(null, _debounce(
+			processFieldValueChange.bind(container, pathToProperty), 2000, {maxWait: 5000})); // max wait for short-name
+		// create an onChange event handler for a select field for the specified field path
+		const onSelectChange = changeHandler.bind(null, processFieldValueChange.bind(container, pathToProperty));
+		
 		if (isEnumeration) {
 			const enumeration = Property.getEnumeration(property, value);
 			const options = enumeration.map((d, i) => {
@@ -190,64 +226,201 @@ export default function EditDescriptorModelProperties(props) {
 				// so we categorically ignore them
 				// https://trello.com/c/uzEwVx6W/230-bug-enum-should-not-use-index-only-name
 				//return <option key={fieldKey + ':' + i} value={d.value}>{d.name}</option>;
-				return <option key={fieldKey.toString() + ':' + i} value={d.name}>{d.name}</option>;
+				return <option key={':' + i} value={d.name}>{d.name}</option>;
 			});
 			const isValueSet = enumeration.filter(d => d.isSelected).length > 0;
 			if (!isValueSet || property.cardinality === '0..1') {
 				const noValueDisplayText = changeCase.title(property.name);
-				options.unshift(<option key={'(value-not-in-enum)' + fieldKey.toString()} value="" placeholder={placeholder}>{noValueDisplayText}</option>);
+				options.unshift(<option key={'(value-not-in-enum)'} value="" placeholder={placeholder}>{noValueDisplayText}</option>);
 			}
-			return <select key={fieldKey.toString()} id={fieldKey.toString()} className={ClassNames({'-value-not-set': !isValueSet})} name={name} value={value} title={name} onChange={onChange} onFocus={onFocus} onBlur={endEditing} onMouseDown={startEditing} onMouseOver={startEditing} readOnly={!isEditable}>{options}</select>;
+			return (
+				<select 
+					key={fieldKey} 
+					id={fieldKey}
+					className={ClassNames({'-value-not-set': !isValueSet})} 
+					defaultValue={value} 
+					title={pathToProperty} 
+					onChange={onSelectChange} 
+					onFocus={onFocus} 
+					onBlur={endEditing} 
+					onMouseDown={startEditing} 
+					onMouseOver={startEditing} 
+					readOnly={!isEditable}>
+						{options}
+				</select>
+			);
+		}
+
+		if (isLeafRef) {
+			let fullPathString = container.key + ':' + path.join(':');
+			let containerRef = container;
+			while (containerRef.parent) {
+				fullPathString = containerRef.parent.key + ':' + fullPathString;
+				containerRef = containerRef.parent;
+			}
+			const leafRefPathValues = Property.getLeafRef(property, path, value, fullPathString, catalogs, container);
+
+			const options = leafRefPathValues && leafRefPathValues.map((d, i) => {
+				return <option key={':' + i} value={d.value}>{d.value}</option>;
+			});
+			const isValueSet = leafRefPathValues.filter(d => d.isSelected).length > 0;
+			if (!isValueSet || property.cardinality === '0..1') {
+				const noValueDisplayText = changeCase.title(property.name);
+				options.unshift(<option key={'(value-not-in-leafref)'} value="" placeholder={placeholder}>{noValueDisplayText}</option>);
+			}
+			return (
+				<select 
+					key={fieldKey} 
+					id={fieldKey} 
+					className={ClassNames({'-value-not-set': !isValueSet})} 
+					defaultValue={value} 
+					title={pathToProperty} 
+					onChange={onSelectChange} 
+					onFocus={onFocus} 
+					onBlur={endEditing} 
+					onMouseDown={startEditing} 
+					onMouseOver={startEditing} 
+					readOnly={!isEditable}>
+						{options}
+				</select>
+			);
+		}
+
+		if (isBoolean) {
+			const options = [
+				<option key={'true'} value="TRUE">TRUE</option>,
+				<option key={'false'} value="FALSE">FALSE</option>
+			]
+
+			// if (!isValueSet) {
+				const noValueDisplayText = changeCase.title(property.name);
+				options.unshift(<option key={'(value-not-in-leafref)'} value="" placeholder={placeholder}></option>);
+			// }
+			let val = value;
+			if(typeof(val) == 'number') {
+				val = value ? "TRUE" : "FALSE"
+			}
+			const isValueSet = (val != '' && val)
+			return (
+				<select 
+					key={fieldKey} 
+					id={fieldKey} 
+					className={ClassNames({'-value-not-set': !isValueSet})} 
+					defaultValue={val && val.toUpperCase()} 
+					title={pathToProperty} 
+					onChange={onSelectChange} 
+					onFocus={onFocus} 
+					onBlur={endEditing} 
+					onMouseDown={startEditing} 
+					onMouseOver={startEditing} 
+					readOnly={!isEditable}>
+						{options}
+				</select>
+			);
+		}
+		
+		if (Property.isLeafEmpty(property)) {
+			// A null value indicates the leaf exists (as opposed to undefined).
+			// We stick in a string when the user actually sets it to simplify things
+			// but the correct thing happens when we serialize to user data
+			let isEmptyLeafPresent = (value === EMPTY_LEAF_PRESENT || value === null); 
+			let present = isEmptyLeafPresent ? EMPTY_LEAF_PRESENT : "";
+			const options = [
+				<option key={'true'} value={EMPTY_LEAF_PRESENT}>Enabled</option>,
+				<option key={'false'} value="">Not Enabled</option>
+			]
+
+			return (
+				<select 
+					key={fieldKey} 
+					id={fieldKey} 
+					className={ClassNames({'-value-not-set': !isEmptyLeafPresent})} 
+					defaultValue={present} 
+					title={pathToProperty} 
+					onChange={onSelectChange} 
+					onFocus={onFocus} 
+					onBlur={endEditing} 
+					onMouseDown={startEditing} 
+					onMouseOver={startEditing} 
+					readOnly={!isEditable}>
+						{options}
+				</select>
+			);
 		}
 
 		if (property['preserve-line-breaks']) {
-			return <textarea key={fieldKey.toString()} cols="5" id={fieldKey.toString()} name={name} value={value} placeholder={placeholder} onChange={onChange} onFocus={onFocus} onBlur={endEditing} onMouseDown={startEditing} onMouseOver={startEditing} onMouseOut={endEditing} onMouseLeave={endEditing} readOnly={!isEditable} />;
+			return (
+				<textarea 
+					key={fieldKey} 
+					cols="5" 
+					id={fieldKey} 
+					defaultValue={value} 
+					placeholder={placeholder} 
+					onChange={onTextChange} 
+					onFocus={onFocus} 
+					onBlur={endEditing} 
+					onMouseDown={startEditing} 
+					onMouseOver={startEditing} 
+					onMouseOut={endEditing} 
+					onMouseLeave={endEditing} 
+					readOnly={!isEditable} />
+			);
 		}
 
-		return <input key={fieldKey.toString()}
-					  id={fieldKey.toString()}
-					  type="text"
-					  name={name}
-					  value={fieldValue}
-					  className={className}
-					  placeholder={placeholder}
-					  onChange={onChange}
-					  onFocus={onFocus}
-					  onBlur={endEditing}
-					  onMouseDown={startEditing}
-					  onMouseOver={startEditing}
-					  onMouseOut={endEditing}
-					  onMouseLeave={endEditing}
-					  readOnly={!isEditable}
-		/>;
+		return (
+			<input 
+				key={fieldKey}
+				id={fieldKey}
+				type="text"
+				defaultValue={fieldValue}
+				className={className}
+				placeholder={placeholder}
+				onChange={onTextChange}
+				onFocus={onFocus}
+				onBlur={endEditing}
+				onMouseDown={startEditing}
+				onMouseOver={startEditing}
+				onMouseOut={endEditing}
+				onMouseLeave={endEditing}
+				readOnly={!isEditable}
+			/>
+		);
 
 	}
 
-	function buildElement(container, property, valuePath, value) {
-		return property.properties.map((property, index) => {
-			let childValue;
-			const childPath = valuePath.slice();
-			if (typeof value === 'object') {
-				childValue = value[property.name];
+	/**
+	 * buiid and return an array of components representing an editor for each property.
+	 * 
+	 * @param {any} container the master document being edited
+	 * @param {[property]} properties 
+	 * @param {string} pathToProperties path within the container to the properties
+	 * @param {Object} data source for each property
+	 * @param {any} props object containing main data panel information, e.g. panel width {width: 375}
+	 * which may be useful/necessary to a components rendering.
+	 * @returns an array of react components
+	 */
+	function buildComponentsForProperties(container, properties, pathToProperties, data, props) {
+		return properties.map((property) => {
+			let value;
+			let propertyPath = pathToProperties.slice();
+			if (data && typeof data === 'object') {
+				value = data[property.name];
 			}
 			if(property.type != 'choice'){
-						childPath.push(property.name);
+				propertyPath.push(property.name);
 			}
-			return build(container, property, childPath, childValue);
-
+			return build(container, property, propertyPath, value, props);
 		});
+	}
+
+	function buildElement(container, property, valuePath, value) {
+		return buildComponentsForProperties(container, property.properties, valuePath, value);
 	}
 
 	function buildChoice(container, property, path, value, key) {
 
-		function onFormFieldValueChanged(event) {
+		function processChoiceChange(name, value) {
 			if (DescriptorModelFactory.isContainer(this)) {
-
-				event.preventDefault();
-
-				let name = event.target.name;
-				const value = event.target.value;
-
 
 				/*
 					Transient State is stored for convenience in the uiState field.
@@ -285,17 +458,17 @@ export default function EditDescriptorModelProperties(props) {
 					isTopCase = true;
 					choiceObject = utils.resolvePath(this.model, [selected].join('.'));
 				}
-				utils.assignPathValue(stateObject, [selected].join('.'), _.cloneDeep(choiceObject));
+				utils.assignPathValue(stateObject, [selected].join('.'), _cloneDeep(choiceObject));
 
-				if(this.model.uiState.choice.hasOwnProperty(name)) {
-					delete this.model[selected];
-					utils.removePathValue(this.model, [name, selected].join('.'), isTopCase);
-				} else {
-					// remove the current choice value from the model
-				utils.removePathValue(this.model, [name, selected].join('.'), isTopCase);
+				if(selected) {
+					if(this.model.uiState.choice.hasOwnProperty(name)) {
+						delete this.model[selected];
+						utils.removePathValue(this.model, [name, selected].join('.'), isTopCase);
+					} else {
+						// remove the current choice value from the model
+						utils.removePathValue(this.model, [name, selected].join('.'), isTopCase);
+					}
 				}
-
-
 
 				// get any state for the new selected choice
 				const newChoiceObject = utils.resolvePath(stateObject, [value].join('.')) || {};
@@ -307,7 +480,6 @@ export default function EditDescriptorModelProperties(props) {
 					utils.assignPathValue(this.model, [value].join('.'), newChoiceObject)
 				}
 
-
 				// update the selected name
 				utils.assignPathValue(this.model, statePath.concat('selected').join('.'), value);
 
@@ -315,13 +487,20 @@ export default function EditDescriptorModelProperties(props) {
 			}
 		}
 
+		const pathToChoice = path.join('.');
 		const caseByNameMap = {};
 
-		const onChange = onFormFieldValueChanged.bind(container);
+		const choiceChangeHandler = processChoiceChange.bind(container, pathToChoice);
+		const onChange = ((handleChoiceChange, event) => {
+			event.preventDefault();
+			handleChoiceChange(event.target.value);
+		}).bind(null, choiceChangeHandler);
+
 
 		const cases = property.properties.map(d => {
 			if (d.type === 'case') {
-				caseByNameMap[d.name] = d.properties[0];
+				//Previous it was assumed that a case choice would have only one property. Now we pass on either the only item or the
+				caseByNameMap[d.name] = d.properties && (d.properties.length == 1 ? d.properties[0] : d.properties);
 				return {
 					optionName: d.name,
 					optionTitle: d.description,
@@ -333,7 +512,7 @@ export default function EditDescriptorModelProperties(props) {
 			return {optionName: d.name};
 		});
 
-		const options = [{optionName: ''}].concat(cases).map((d, i) => {
+		const options = [{optionName: '', optionValue: false}].concat(cases).map((d, i) => {
 			return (
 				<option key={i} value={d.optionValue} title={d.optionTitle}>
 					{d.optionName}
@@ -342,39 +521,47 @@ export default function EditDescriptorModelProperties(props) {
 			);
 		});
 
-		const selectName = path.join('.');
-		let selectedOptionPath = ['uiState.choice', selectName, 'selected'].join('.');
+		let selectedOptionPath = ['uiState.choice', pathToChoice, 'selected'].join('.');
 		//Currently selected choice/case statement on UI model
 		let selectedOptionValue = utils.resolvePath(container.model, selectedOptionPath);
 		//If first time loaded, and none is selected, check if there is a value corresponding to a case statement in the container model
 		if(!selectedOptionValue) {
 			//get field properties for choice on container model
-			let fieldProperties = utils.resolvePath(container.model, selectName);
+			let fieldProperties = utils.resolvePath(container.model, pathToChoice);
 			if(fieldProperties) {
 				//Check each case statement in model and see if it is present in container model.
 				cases.map(function(c){
-					if(fieldProperties.hasOwnProperty(c.optionName)) {
-						utils.assignPathValue(container.model, ['uiState.choice', selectName, 'selected'].join('.'), c.optionValue);
+					if(c.optionValue && fieldProperties.hasOwnProperty(c.optionValue.split('.')[1])) {
+						utils.assignPathValue(container.model, ['uiState.choice', pathToChoice, 'selected'].join('.'), c.optionValue);
 					}
 				});
-				selectedOptionValue = utils.resolvePath(container.model, ['uiState.choice', selectName, 'selected'].join('.'));
+				selectedOptionValue = utils.resolvePath(container.model, ['uiState.choice', pathToChoice, 'selected'].join('.'));
 			} else {
 				property.properties.map(function(p) {
-					let pname = p.properties[0].name;
+					let pname = p.properties[0] && p.properties[0].name;
 					if(container.model.hasOwnProperty(pname)) {
-						utils.assignPathValue(container.model, ['uiState.choice', selectName, 'selected'].join('.'), [p.name, pname].join('.'));
+						utils.assignPathValue(container.model, ['uiState.choice', pathToChoice, 'selected'].join('.'), [p.name, pname].join('.'));
 					}
 				})
-				selectedOptionValue = utils.resolvePath(container.model, ['uiState.choice', selectName, 'selected'].join('.'));
+				selectedOptionValue = utils.resolvePath(container.model, ['uiState.choice', pathToChoice, 'selected'].join('.'));
 			}
 		}
 		//If selectedOptionValue is present, take first item in string which represents the case name.
 		const valueProperty = caseByNameMap[selectedOptionValue ? selectedOptionValue.split('.')[0] : undefined] || {properties: []};
 		const isLeaf = Property.isLeaf(valueProperty);
-		const hasProperties = _.isArray(valueProperty.properties) && valueProperty.properties.length;
+		const hasProperties = _isArray(valueProperty.properties) && valueProperty.properties.length;
 		const isMissingDescriptorMeta = !hasProperties && !Property.isLeaf(valueProperty);
 		//Some magic that prevents errors for arising
-		const valueResponse = valueProperty.properties.length ? valueProperty.properties.map((d, i) => {
+		let valueResponse = null;
+		if (valueProperty.properties && valueProperty.properties.length) { 
+			valueResponse = valueProperty.properties.map(valuePropertyFn);
+		} else if (!isMissingDescriptorMeta) {
+			let value = utils.resolvePath(container.model, path.concat(valueProperty.name).join('.')) || container.model[valueProperty.name];
+			valueResponse = build(container, valueProperty, path.concat(valueProperty.name), value)
+		} else {
+			valueResponse = valueProperty.map && valueProperty.map(valuePropertyFn);
+		}
+		function valuePropertyFn(d, i) {
 			const childPath = path.concat(valueProperty.name, d.name);
 			const childValue = utils.resolvePath(container.model, childPath.join('.'));
 			return (
@@ -382,13 +569,24 @@ export default function EditDescriptorModelProperties(props) {
 					{build(container, d, childPath, childValue, props)}
 				</div>
 			);
-		}) : (!isMissingDescriptorMeta) ? build(container, valueProperty, path.concat(valueProperty.name), utils.resolvePath(container.model, path.concat(valueProperty.name).join('.')) || container.model[valueProperty.name]) : null
+		}
 		// end magic
 		const onFocus = onFocusPropertyFormInputElement.bind(container, property, path, value);
 
 		return (
 			<div key={key} className="choice">
-				<select key={Date.now()} className={ClassNames({'-value-not-set': !selectedOptionValue})} name={selectName} value={selectedOptionValue} onChange={onChange} onFocus={onFocus} onBlur={endEditing} onMouseDown={startEditing} onMouseOver={startEditing} onMouseOut={endEditing} onMouseLeave={endEditing}>
+				<select 
+					key={Date.now()} 
+					className={ClassNames({'-value-not-set': !selectedOptionValue})} 
+					defaultValue={selectedOptionValue} 
+					onChange={onChange} 
+					onFocus={onFocus} 
+					onBlur={endEditing} 
+					onMouseDown={startEditing} 
+					onMouseOver={startEditing} 
+					onMouseOut={endEditing} 
+					onMouseLeave={endEditing}
+				>
 					{options}
 				</select>
 				{valueResponse}
@@ -397,13 +595,13 @@ export default function EditDescriptorModelProperties(props) {
 
 	}
 
-	function buildSimpleListItem(container, property, path, value, key, index) {
+	function buildSimpleListItem(container, property, path, value, uniqueId, index) {
 		// todo need to abstract this better
 		const title = getTitle(value);
 		var req = require.context("../", true, /\.svg/);
 		return (
-			<div>
-				<a href="#select-list-item" key={Date.now()} className={property.name + '-list-item simple-list-item '} onClick={onClickSelectItem.bind(container, property, path, value)}>
+			<div key={uniqueId} >
+				<a href="#select-list-item" className={property.name + '-list-item simple-list-item '} onClick={onClickSelectItem.bind(container, property, path, value)}>
 					<img src={req('./' + DescriptorModelIconFactory.getUrlForType(property.name))} width="20px" />
 					<span>{title}</span>
 				</a>
@@ -412,10 +610,10 @@ export default function EditDescriptorModelProperties(props) {
 		);
 	}
 
-	function buildRemoveListItem(container, property, valuePath, fieldKey, index) {
+	function buildRemoveListItem(container, property, valuePath, index) {
 		const className = ClassNames(property.name + '-remove actions');
 		return (
-			<div key={fieldKey.concat(index).join(':')} className={className}>
+			<div className={className}>
 				<h3>
 					<span className={property.type + '-name name'}>{changeCase.title(property.name)}</span>
 					<span className="info">{index + 1}</span>
@@ -425,12 +623,12 @@ export default function EditDescriptorModelProperties(props) {
 		);
 	}
 
-	function buildLeafListItem(container, property, valuePath, value, key, index) {
+	function buildLeafListItem(container, property, valuePath, value, uniqueId, index) {
 		// look at the type to determine how to parse the value
 		return (
-			<div>
-				{buildRemoveListItem(container, property, valuePath, key, index)}
-				{buildField(container, property, valuePath, value, key)}
+			<div key={uniqueId}>
+				{buildRemoveListItem(container, property, valuePath, index)}
+				{buildField(container, property, valuePath, value, uniqueId)}
 			</div>
 
 		);
@@ -443,19 +641,28 @@ export default function EditDescriptorModelProperties(props) {
 		const isArray = Property.isArray(property);
 		const isObject = Property.isObject(property);
 		const isLeafList = Property.isLeafList(property);
-		const fieldKey = [container.id].concat(path);
 		const isRequired = Property.isRequired(property);
 		const title = changeCase.titleCase(property.name);
 		const columnCount = property.properties.length || 1;
 		const isColumnar = isArray && (Math.round(props.width / columnCount) > 155);
 		const classNames = {'-is-required': isRequired, '-is-columnar': isColumnar};
 
+		// create a unique Id for use as react component keys and html element ids
+		// use uid (from ui info) instead of id property (which is not stable)
+		let uniqueId = container.uid;
+		let containerRef = container;
+		while (containerRef.parent) {
+			uniqueId = containerRef.parent.uid + ':' + uniqueId;
+			containerRef = containerRef.parent;
+		}
+		uniqueId += ':' + path.join(':')
+
 		if (!property.properties && isObject) {
 			const uiState = DescriptorModelMetaFactory.getModelMetaForType(property.name) || {};
 			property.properties = uiState.properties;
 		}
 
-		const hasProperties = _.isArray(property.properties) && property.properties.length;
+		const hasProperties = _isArray(property.properties) && property.properties.length;
 		const isMissingDescriptorMeta = !hasProperties && !Property.isLeaf(property);
 
 		// ensure value is not undefined for non-leaf property types
@@ -464,7 +671,7 @@ export default function EditDescriptorModelProperties(props) {
 				value = isArray ? [] : {};
 			}
 		}
-		const valueAsArray = _.isArray(value) ? value : isLeafList && typeof value === 'undefined' ? [] : [value];
+		const valueAsArray = _isArray(value) ? value : isLeafList && typeof value === 'undefined' ? [] : [value];
 
 		const isMetaField = property.name === 'meta';
 		const isCVNFD = property.name === 'constituent-vnfd';
@@ -473,12 +680,16 @@ export default function EditDescriptorModelProperties(props) {
 		valueAsArray.forEach((value, index) => {
 
 			let field;
-			const key = fieldKey.slice();
 			const valuePath = path.slice();
+			// create a unique field Id for use as react component keys and html element ids
+			// notes: 
+			//   keys only need to be unique on components in the same array
+			//   html element ids should be unique with the document (or form)
+			let fieldId = uniqueId;
 
 			if (isArray) {
 				valuePath.push(index);
-				key.push(index);
+				fieldId = isLeafList ? fieldId + index + value : resolveReactKey(value);
 			}
 
 			if (isMetaField) {
@@ -490,17 +701,17 @@ export default function EditDescriptorModelProperties(props) {
 			}
 
 			if (isMissingDescriptorMeta) {
-				field = <span key={key.concat('warning').join(':')} className="warning">No Descriptor Meta for {property.name}</span>;
+				field = <span key={fieldId} className="warning">No Descriptor Meta for {property.name}</span>;
 			} else if (property.type === 'choice') {
-				field = buildChoice(container, property, valuePath, value, key.join(':'));
+				field = buildChoice(container, property, valuePath, value, fieldId);
 			} else if (isSimpleListView) {
-				field = buildSimpleListItem(container, property, valuePath, value, key, index);
+				field = buildSimpleListItem(container, property, valuePath, value, fieldId, index);
 			} else if (isLeafList) {
-				field = buildLeafListItem(container, property, valuePath, value, key, index);
+				field = buildLeafListItem(container, property, valuePath, value, fieldId, index);
 			} else if (hasProperties) {
-				field = buildElement(container, property, valuePath, value, key.join(':'))
+				field = buildElement(container, property, valuePath, value, fieldId)
 			} else {
-				field = buildField(container, property, valuePath, value, key.join(':'));
+				field = buildField(container, property, valuePath, value, fieldId);
 			}
 
 			function onClickLeaf(property, path, value, event) {
@@ -510,7 +721,7 @@ export default function EditDescriptorModelProperties(props) {
 				event.preventDefault();
 				event.stopPropagation();
 				this.getRoot().uiState.focusedPropertyPath = path.join('.');
-				console.log('property selected', path.join('.'));
+				console.debug('property selected', path.join('.'));
 				ComposerAppActions.propertySelected([path.join('.')]);
 			}
 
@@ -518,10 +729,10 @@ export default function EditDescriptorModelProperties(props) {
 			const isContainerList = isArray && !(isSimpleListView || isLeafList);
 
 			fields.push(
-				<div key={fieldKey.concat(['property-content', index]).join(':')}
+				<div key={fieldId}
 					 className={ClassNames('property-content', {'simple-list': isSimpleListView})}
 					 onClick={clickHandler.bind(container, property, valuePath, value)}>
-					{isContainerList ? buildRemoveListItem(container, property, valuePath, fieldKey, index) : null}
+					{isContainerList ? buildRemoveListItem(container, property, valuePath, index) : null}
 					{field}
 				</div>
 			);
@@ -536,7 +747,7 @@ export default function EditDescriptorModelProperties(props) {
 			value = utils.resolvePath(container.model, ['uiState.choice'].concat(path, 'selected').join('.'));
 			if(!value) {
 				property.properties.map(function(p) {
-					let pname = p.properties[0].name;
+					let pname = p.properties[0] && p.properties[0].name;
 					if(container.model.hasOwnProperty(pname)) {
 						value = container.model[pname];
 					}
@@ -550,9 +761,9 @@ export default function EditDescriptorModelProperties(props) {
 		const onFocus = isLeaf ? event => event.target.classList.add('-is-focused') : false;
 
 		return (
-			<div key={fieldKey.join(':')} className={ClassNames(property.type + '-property property', classNames)} onFocus={onFocus}>
+			<div key={uniqueId} className={ClassNames(property.type + '-property property', classNames)} onFocus={onFocus}>
 				<h3 className="property-label">
-					<label htmlFor={fieldKey.join(':')}>
+					<label htmlFor={uniqueId}>
 						<span className={property.type + '-name name'}>{title}</span>
 						<small>
 							<span className={property.type + '-info info'}>{displayValueInfo}</span>
@@ -582,11 +793,7 @@ export default function EditDescriptorModelProperties(props) {
 			<div className="basic-properties-group">
 				<h2>Basic</h2>
 				<div>
-					{basicProperties.map(property => {
-						const path = [property.name];
-						const value = container.model[property.name];
-						return build(container, property, path, value);
-					})}
+					{buildComponentsForProperties(container, basicProperties, [], container.model)}
 				</div>
 			</div>
 		);
@@ -606,11 +813,7 @@ export default function EditDescriptorModelProperties(props) {
 					<a className="toggle-show-less" href="#show-more-properties">less&hellip;</a>
 				</h1>
 				<div className="toggleable">
-					{properties.map(property => {
-						const path = [property.name];
-						const value = container.model[property.name];
-						return build(container, property, path, value, {toggle: true, width: props.width});
-					})}
+					{buildComponentsForProperties(container, properties, [], container.model, {toggle: true, width: props.width})}
 				</div>
 				<div className="toggle-bottom-spacer" style={{visibility: 'hidden', 'height': '50%', position: 'absolute'}}>We need this so when the user closes the panel it won't shift away and scare the bj out of them!</div>
 			</div>
@@ -639,5 +842,6 @@ export default function EditDescriptorModelProperties(props) {
 			{buildAdvancedGroup()}
 		</div>
 	);
+};
 
-}
+

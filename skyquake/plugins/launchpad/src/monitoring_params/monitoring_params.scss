@@ -84,7 +84,8 @@
     display: flex;
 }
 .monitoring_params_component {
-  flex: 1 1;
+    flex: 1 1;
+    flex-basis: 20%;
     text-align:center;
     display: flex;
     flex-direction: column;

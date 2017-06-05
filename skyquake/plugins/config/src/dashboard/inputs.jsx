@@ -4,7 +4,7 @@
 
 import React from 'react';
 import Button from 'widgets/button/rw.button.js';
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
 import SkyquakeComponent from 'widgets/skyquake_container/skyquakeComponent.jsx';
 import Crouton from 'react-crouton';
 import TextInput from 'widgets/form_controls/textInput.jsx';
@@ -79,7 +79,7 @@ class Account extends React.Component {
             }
         }
 
-        let newAccount = _.cloneDeep(removeTrailingWhitespace(Account));
+        let newAccount = _cloneDeep(removeTrailingWhitespace(Account));
         delete newAccount.params;
         newAccount.nestedParams &&
             newAccount.nestedParams['container-name'] &&

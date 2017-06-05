@@ -217,6 +217,15 @@ var passThroughConstructor = function(app) {
 	});
 }
 
+var getPortForProtocol = function(protocol) {
+  switch (protocol) {
+    case 'http':
+      return 8000;
+    case 'https':
+      return 8443;
+  }
+}
+
 module.exports = {
 	/**
 	 * Ensure confd port is on api_server variable.
@@ -233,5 +242,7 @@ module.exports = {
 
 	sendSuccessResponse: sendSuccessResponse,
 
-    passThroughConstructor: passThroughConstructor
+    passThroughConstructor: passThroughConstructor,
+
+    getPortForProtocol: getPortForProtocol
 };

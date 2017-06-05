@@ -29,7 +29,7 @@ module.exports = {
       remote: function() {
         return new Promise(function(resolve, reject) {
           $.ajax({
-            url: '//' + window.location.hostname + ':' + NODE_PORT + '/api/launchpad/network-service?api_server=' + API_SERVER,
+            url: '//' + window.location.hostname + ':' + window.location.port + '/api/launchpad/network-service?api_server=' + API_SERVER,
             type: 'GET',
             beforeSend: Utils.addAuthorizationStub,
             success: function(data) {
@@ -46,7 +46,7 @@ module.exports = {
     return {
       remote: function(state, environment) {
         return $.ajax({
-          url: '//' + window.location.hostname + ':' + NODE_PORT + '/api/launchpad/environment?api_server=' + API_SERVER,
+          url: '//' + window.location.hostname + ':' + window.location.port + '/api/launchpad/environment?api_server=' + API_SERVER,
           type: 'POST',
           beforeSend: Utils.addAuthorizationStub,
           dataType: 'json',
@@ -65,7 +65,7 @@ module.exports = {
       remote: function() {
         return new Promise(function(resolve, reject) {
           $.ajax({
-            url: '//' + window.location.hostname + ':' + NODE_PORT + '/api/launchpad/pools?api_server=' + API_SERVER,
+            url: '//' + window.location.hostname + ':' + window.location.port + '/api/launchpad/pools?api_server=' + API_SERVER,
             type: 'GET',
             beforeSend: Utils.addAuthorizationStub,
             success: function(data) {
@@ -83,7 +83,7 @@ module.exports = {
       remote: function() {
         return new Promise(function(resolve, reject) {
           $.ajax({
-            url: '//' + window.location.hostname + ':' + NODE_PORT + '/api/launchpad/sla-params?api_server=' + API_SERVER,
+            url: '//' + window.location.hostname + ':' + window.location.port + '/api/launchpad/sla-params?api_server=' + API_SERVER,
             type: 'GET',
             beforeSend: Utils.addAuthorizationStub,
             success: function(data) {

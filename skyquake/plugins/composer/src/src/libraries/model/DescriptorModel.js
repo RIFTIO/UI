@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * Created by onvelocity on 8/23/15.
  */
 
-import _ from 'lodash'
+import _isArray from 'lodash/isArray'
 import guid from '../guid'
 import Position from '../graph/Position'
 import IconFactory from './IconFactory'
@@ -279,7 +279,7 @@ export default class DescriptorModel {
 
 	updateModelList(modelFieldName, modelFieldValue, descriptorClass = DescriptorModel, newItemAddedSuccessCallback = () => {}) {
 		// value can be Array of (DescriptorModel | json model), DescriptorModel, or json model
-		if (_.isArray(modelFieldValue)) {
+		if (_isArray(modelFieldValue)) {
 			this.model[modelFieldName] = modelFieldValue.map(d => d instanceof descriptorClass ? d.model : d);
 			return true;
 		}

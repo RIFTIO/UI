@@ -52,7 +52,9 @@ export default class VirtualNetworkFunction extends DescriptorModel {
 	}
 
 	createVdu() {
-		const model = DescriptorModelMetaFactory.createModelInstanceForType('vnfd.vdu');
+		const property = DescriptorModelMetaFactory.getModelMetaForType('vnfd.vdu');
+		const uniqueName = DescriptorModelMetaFactory.generateItemUniqueName(this.vdu, property);
+		const model = DescriptorModelMetaFactory.createModelInstanceForType('vnfd.vdu', uniqueName);
 		return this.vdu = DescriptorModelFactory.newVirtualDeploymentUnit(model, this);
 	}
 
@@ -71,7 +73,9 @@ export default class VirtualNetworkFunction extends DescriptorModel {
 	}
 
 	createVld() {
-		const model = DescriptorModelMetaFactory.createModelInstanceForType('vnfd.internal-vld');
+		const property = DescriptorModelMetaFactory.getModelMetaForType('vnfd.internal-vld');
+		const uniqueName = DescriptorModelMetaFactory.generateItemUniqueName(this['internal-vld'], property);
+		const model = DescriptorModelMetaFactory.createModelInstanceForType('vnfd.internal-vld', uniqueName);
 		return this.vld = DescriptorModelFactory.newInternalVirtualLink(model, this);
 	}
 

@@ -62,6 +62,23 @@ class About extends React.Component {
     // If in the mission control, create an uptime table;
     var uptime = this.state.createTime && this.state.createTime;
 
+    var fossInfoComponent = (
+      <div className="table-container">
+        <h2> FOSS Info </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <a target="_blank" href='https://open.riftio.com/open-source-software-usage/'>
+                  Click here for FOSS Info (requires Internet connection)
+                </a>
+              </th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    );
+
     var uptimeComponent = (
       <div className="table-container">
                   <h2> Uptime Info </h2>
@@ -103,6 +120,7 @@ class About extends React.Component {
     if (this.state != null) {
       var html = (
               <div className="table-container-wrapper">
+                {fossInfoComponent}
                 {uptimeComponent}
                 <div className="table-container">
                   <h2> Version Info </h2>

@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,10 +21,10 @@
 
 'use strict';
 
-import _ from 'lodash'
 import ColorGroups from '../../ColorGroups'
 import DescriptorModel from '../DescriptorModel'
 import ForwardingGraph from './ForwardingGraph'
+import VirtualNetworkFunctionAccessPointMap from './VirtualNetworkFunctionAccessPointMap'
 import VirtualLink from './VirtualLink'
 import ConstituentVnfd from './ConstituentVnfd'
 import PhysicalNetworkFunction from './PhysicalNetworkFunction'
@@ -119,7 +119,9 @@ export default class NetworkService extends DescriptorModel {
 	}
 
 	createVld() {
-		const model = DescriptorModelMetaFactory.createModelInstanceForType('nsd.vld');
+		const property = DescriptorModelMetaFactory.getModelMetaForType('nsd.vld');
+		const uniqueName = DescriptorModelMetaFactory.generateItemUniqueName(this.vld, property);
+		const model = DescriptorModelMetaFactory.createModelInstanceForType('nsd.vld', uniqueName);
 		return this.vld = DescriptorModelFactory.newVirtualLink(model, this);
 	}
 
@@ -127,6 +129,45 @@ export default class NetworkService extends DescriptorModel {
 		return this.removeModelListItem('vld', vld);
 	}
 
+
+// <<<<<<< Updated upstream
+//     get configParameterMap() {
+//         if (!this.model['config-parameter-map']) {
+//             this.model['config-parameter-map'] = [];
+//         }
+//         return this.model['config-parameter-map'].map(d => DescriptorModelFactory.newVirtualNetworkFunctionAccessPointMap(d, this)).map((fg, i) => {
+//             return fg;
+//         });
+//     }
+
+//     set configParameterMap(obj) {
+//         const onVirtualNetworkFunctionAccessPointMap = (fg) => {
+
+//         };
+//         this.updateModelList('config-parameter-map', obj, VirtualNetworkFunctionAccessPointMap, onVirtualNetworkFunctionAccessPointMap);
+//     }
+
+//     createConfigParameterMap(model) {
+//         model = model || DescriptorModelMetaFactory.createModelInstanceForType('nsd.config-parameter-map');
+//         return this.configParameterMap = DescriptorModelFactory.newVirtualNetworkFunctionAccessPointMap(model, this);
+//     }
+// =======
+	get configParameterMap() {
+		if (!this.model['config-parameter-map']) {
+			this.model['config-parameter-map'] = [];
+		}
+		return this.model['config-parameter-map'].map(d => DescriptorModelFactory.newVirtualNetworkFunctionAccessPointMap(d, this))
+	}
+
+	set configParameterMap(obj) {
+		this.updateModelList('config-parameter-map', obj, VirtualNetworkFunctionAccessPointMap);
+	}
+
+	createConfigParameterMap() {
+		const model = DescriptorModelMetaFactory.createModelInstanceForType('nsd.config-parameter-map');
+		return this.configParameterMap = DescriptorModelFactory.newVirtualNetworkFunctionAccessPointMap(model, this);
+	}
+// >>>>>>> Stashed changes
 
 	get vnffgd() {
 		if (!this.model.vnffgd) {
@@ -139,15 +180,13 @@ export default class NetworkService extends DescriptorModel {
 	}
 
 	set vnffgd(obj) {
-		const onAddForwardingGraph = (fg) => {
-			const index = this.vnffgd.map(suffixAsInteger('short-name')).reduce(toBiggestValue, this.vnffgd.length);
-			fg.model['short-name'] = 'FG-' + index;
-		};
-		this.updateModelList('vnffgd', obj, ForwardingGraph, onAddForwardingGraph);
+		this.updateModelList('vnffgd', obj, ForwardingGraph);
 	}
 
 	createVnffgd(model) {
-		model = model || DescriptorModelMetaFactory.createModelInstanceForType('nsd.vnffgd');
+		const property = DescriptorModelMetaFactory.getModelMetaForType('nsd.vnffgd');
+		const uniqueName = DescriptorModelMetaFactory.generateItemUniqueName(this.vnffgd, property, 'fg');
+		model = model || DescriptorModelMetaFactory.createModelInstanceForType('nsd.vnffgd', uniqueName);
 		return this.vnffgd = DescriptorModelFactory.newForwardingGraph(model, this);
 	}
 
@@ -158,6 +197,7 @@ export default class NetworkService extends DescriptorModel {
 	get forwardingGraphs() {
 		return this.vnffgd;
 	}
+
 
 
 	// NOTE temporarily disable NSD connection points

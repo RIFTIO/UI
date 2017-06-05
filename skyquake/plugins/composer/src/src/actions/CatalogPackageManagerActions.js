@@ -21,7 +21,17 @@ import alt from '../alt';
 class CatalogPackageManagerActions {
 
 	constructor() {
-		this.generateActions('downloadCatalogPackage', 'downloadCatalogPackageStatusUpdated', 'downloadCatalogPackageError', 'uploadCatalogPackage', 'uploadCatalogPackageStatusUpdated', 'uploadCatalogPackageError', 'removeCatalogPackage');
+		this.generateActions(
+			'downloadCatalogPackage', 
+			'downloadCatalogPackageStatusUpdated',
+			'downloadCatalogPackageError', 
+			'uploadCatalogPackage', 
+			'uploadCatalogPackageStatusUpdated', 
+			'uploadCatalogPackageError',
+			'copyCatalogPackage', 
+			'updateStatus', 
+			'removeCatalogOperation'
+			);
 	}
 
 }

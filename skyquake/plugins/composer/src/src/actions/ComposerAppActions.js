@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,8 @@ import alt from '../alt';
 class ComposerAppActions {
 
 	constructor() {
-		this.generateActions('showError', 'clearError', 'setDragState', 'propertySelected', 'showJsonViewer', 'closeJsonViewer', 'selectModel', 'outlineModel', 'clearSelection', 'enterFullScreenMode', 'exitFullScreenMode');
+		this.generateActions('showError', 'clearError', 'setDragState', 'propertySelected', 'showJsonViewer', 'closeJsonViewer', 'selectModel', 'outlineModel', 'clearSelection', 'enterFullScreenMode', 'exitFullScreenMode',
+                             'showAssets', 'showDescriptor');
 	}
 
 }

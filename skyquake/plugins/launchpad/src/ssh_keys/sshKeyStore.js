@@ -20,7 +20,8 @@ import SshKeySource from './sshKeySource.js';
 import GUID from 'utils/guid.js';
 import AppHeaderActions from 'widgets/header/headerActions.js';
 import Alt from '../alt';
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
+import _merge from 'lodash/merge';
 
 
 export default class SshKeyStore {
@@ -29,7 +30,7 @@ export default class SshKeyStore {
             keys: [],
             entities: {}
         };
-        this.dataCache = _.cloneDeep(this.data);
+        this.dataCache = _cloneDeep(this.data);
         this.newKey = {
           name: '',
           key: ''
@@ -67,7 +68,7 @@ export default class SshKeyStore {
     cancelEditSshKeyPair = (k) => {
         let self = this;
         return function(e) {
-            let data = _.cloneDeep(self.data);
+            let data = _cloneDeep(self.data);
             data.entities[k].key = self.dataCache.entities[k].key;
             data.entities[k].isEditable = false;
             self.setState({data:data});
@@ -106,7 +107,7 @@ export default class SshKeyStore {
             isEditable: false
         };
         this.setState({
-            dataCache: _.cloneDeep(keys),
+            dataCache: _cloneDeep(keys),
             data: keys,
             newKey: {
               name: '',
@@ -122,7 +123,7 @@ export default class SshKeyStore {
             isEditable: false
         };
         this.setState({
-            dataCache: _.cloneDeep(keys),
+            dataCache: _cloneDeep(keys),
             data: keys,
             newKey: {
               name: '',
@@ -135,7 +136,7 @@ export default class SshKeyStore {
         keys.keys.splice(keys.keys.indexOf(data.name), 1);
         delete keys.entities[data.name];
         this.setState({
-            dataCache: _.cloneDeep(keys),
+            dataCache: _cloneDeep(keys),
             data: keys
         })
     }
@@ -146,7 +147,7 @@ export default class SshKeyStore {
         let flattened = this.flattenKeys(data);
         this.setState({
             data: flattened,
-            dataCache: _.cloneDeep(flattened)
+            dataCache: _cloneDeep(flattened)
         })
     }
     updateSshKeyPair = (k, field) => {
@@ -166,7 +167,7 @@ export default class SshKeyStore {
         };
         data && data.map(function(d){
             fd.keys.push(d.name);
-            fd.entities[d.name] = _.merge({isEditable: false}, d)
+            fd.entities[d.name] = _merge({isEditable: false}, d)
         });
         return fd;
     }

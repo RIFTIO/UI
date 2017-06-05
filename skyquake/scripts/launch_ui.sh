@@ -42,37 +42,6 @@ start_servers() {
 	fi
 }
 
-function extract_node_modules() {
-    tar xf node_modules.tar
-    touch timestamp.txt
-}
-
-function handle_plugin_node_modules() {
-    cd $THIS_DIR
-    echo "Handling plugin node modules"
-
-    cd ../plugins
-    for dir in */; do
-        echo "Checking plugin "${dir}" for newer node_modules"
-        cd ${dir}
-        if [ ! -f timestamp.txt ]; then
-            echo "timestamp file not found ... node_modules need to be expanded and timestamp needs to be touched"
-            extract_node_modules
-        else
-            echo "Checking if node_modules.tar has a newer timestamp than timestamp.txt"
-            if [[ node_modules.tar -nt timestamp.txt ]]; then
-                echo "node_modules.tar is newer than timestamp ... node modules need to be expanded and timestamp needs to be touched"
-                extract_node_modules
-            else
-                echo "node_modules.tar is older than timestamp ... nothing needs to be done"
-            fi
-        fi
-        cd ..
-        echo "Checking plugin "${dir}" for newer node_modules ...done"
-    done
-}
-
-
 # Begin work
 for i in "$@"
 do
@@ -110,8 +79,10 @@ fi
 # change to the directory of this script
 THIS_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-# Call function to handle tarred node_modules as cpack+RPM cannot handle a lot of files
-handle_plugin_node_modules
+cd $THIS_DIR
+
+# Call script to handle tarred node_modules as cpack+RPM cannot handle a lot of files
+$THIS_DIR/handle_plugin_node_modules
 
 # Call function to start web and API servers
 start_servers

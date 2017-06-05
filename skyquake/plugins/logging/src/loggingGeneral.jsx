@@ -16,7 +16,9 @@
  *
  */
 import React from 'react';
-import _ from 'lodash';
+import _isEmpty from 'lodash/isEmpty';
+import _find from 'lodash/find';
+import _cloneDeep from 'lodash/cloneDeep';
 import './logging.scss';
 
 import Button from 'widgets/button/rw.button.js';
@@ -199,7 +201,7 @@ export default class LoggingGeneral extends React.Component {
   getData() {
     LoggingStore.getLoggingConfig();
     this.setState({
-      isLoading: _.isEmpty(this.state.loggingConfig)
+      isLoading: _isEmpty(this.state.loggingConfig)
     });
   }
   componentWillUnmount = () => {
@@ -239,7 +241,7 @@ export default class LoggingGeneral extends React.Component {
     this.context.router.push({pathname: ''});
   }
   // removeCategoryNulls(config) {
-  //   let cleanConfig = _.cloneDeep(config);
+  //   let cleanConfig = _cloneDeep(config);
   //   let cleanSeverities = [];
   //   config.defaultSeverities.map(function(d) {
   //     if (d.severity) {
@@ -250,7 +252,7 @@ export default class LoggingGeneral extends React.Component {
   //   return cleanConfig;
   // }
   cleanupConfig(config) {
-    let cleanConfig = _.cloneDeep(config);
+    let cleanConfig = _cloneDeep(config);
     let cleanSeverities = [];
     cleanConfig.defaultSeverities && cleanConfig.defaultSeverities.map((defSev) => {
       if (defSev.severity) {
@@ -360,14 +362,14 @@ export default class LoggingGeneral extends React.Component {
     // for RIFT-14856 so that default severities map to syslog sink
     
     // Find first syslog sink with (WTF - no type on sinks!) name syslog.
-    let syslogSink = this.state.loggingConfig.sinks && _.find(this.state.loggingConfig.sinks, {
+    let syslogSink = this.state.loggingConfig.sinks && _find(this.state.loggingConfig.sinks, {
       name: 'syslog'
     });
     let defaultSyslogSeverities = [];
 
     this.state.loggingConfig && this.state.loggingConfig.defaultSeverities && this.state.loggingConfig.defaultSeverities.map((defaultSeverity) => {
       // Mapping between default categories and names inside a sink
-      let syslogFilterCategory = (syslogSink.filter && syslogSink.filter.category && _.find(syslogSink.filter.category, {
+      let syslogFilterCategory = (syslogSink.filter && syslogSink.filter.category && _find(syslogSink.filter.category, {
         name: defaultSeverity.category
       })) || {
         name: defaultSeverity.category,

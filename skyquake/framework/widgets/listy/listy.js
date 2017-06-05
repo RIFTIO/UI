@@ -16,7 +16,9 @@
  *
  */
 import React from 'react';
-import _ from 'lodash';
+import _isArrayLike from 'lodash/isArrayLike';
+import _isObjectLike from 'lodash/isObjectLike';
+import _isEmpty from 'lodash/isEmpty';
 
 /**
  *
@@ -40,10 +42,10 @@ export default class Listy extends React.Component {
 
  		var listNode = null;
  		var self = this;
- 		if (_.isArrayLike(data) && _.isObjectLike(data)) {
+ 		if (_isArrayLike(data) && _isObjectLike(data)) {
  			var children = [];
 			data.forEach(function(element, index, array) {
-				if ( _.isArrayLike(element) || _.isObjectLike(element)) {
+				if ( _isArrayLike(element) || _isObjectLike(element)) {
 					children.push(self.createList(element, iter+1));
 				} else {
 					children.push(React.createElement(itemTag, {
@@ -57,10 +59,10 @@ export default class Listy extends React.Component {
 				key: iter,
 				className: groupClass }, children);
  		}
- 		else if (_.isObjectLike(data)) {
+ 		else if (_isObjectLike(data)) {
  			var children = [];
  			for (var key in data) {
- 				if ( _.isArrayLike(data[key]) || _.isObjectLike(data[key])) {
+ 				if ( _isArrayLike(data[key]) || _isObjectLike(data[key])) {
  					children.push(
  						React.createElement(listHeaderTag, {
  							key: key + '_header',
@@ -103,7 +105,7 @@ export default class Listy extends React.Component {
 
  		return React.createElement("div", {
  			className: "listy" },
- 			_.isEmpty(data) ? 
+ 			_isEmpty(data) ? 
  			this.noDataMessage() : 
  			this.createList(data)
  		)
@@ -116,7 +118,7 @@ Listy.validateTagDefinition = function(props, propName, componentName) {
 
 	if (!obj)
 		return new Error('Validation failed. "%" is undefined', fullAttr);
-	if (!obj.hasOwnProperty("tag") || _.isEmpty(obj.tag))
+	if (!obj.hasOwnProperty("tag") || _isEmpty(obj.tag))
 		return new Error('Validation failed. "%s" missing attribute "tag"', fullAttr);
 	if (!obj.hasOwnProperty("className") || obj.className == undefined)
 		return new Error('Validation failed. "%s" missing attribute "className"', fullAttr);

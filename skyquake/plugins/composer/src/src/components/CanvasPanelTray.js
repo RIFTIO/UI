@@ -16,13 +16,17 @@ export default function (props) {
 		right: props.layout.right,
 		display: props.show ? false : 'none'
 	};
+    const PANEL = {
+        FORWARD: 'forwarding',
+        PARAMETER: 'parameter'
+    }
 	const classNames = ClassNames('CanvasPanelTray', {'-with-transitions': !document.body.classList.contains('resizing')});
 	function onClickToggleOpenClose(event) {
 		if (event.defaultPrevented) return;
 		event.preventDefault();
 		// don't toggle if the user was resizing
 		if (!uiTransient.isResizing) {
-			CanvasPanelTrayActions.toggleOpenClose();
+			CanvasPanelTrayActions.toggleOpenClose(event);
 		}
 		event.target.removeEventListener('mousemove', onMouseMove, true);
 	}
@@ -37,7 +41,26 @@ export default function (props) {
 	const isOpen = style.height > 25;
 	return (
 		<div className={classNames} data-resizable="top" data-resizable-handle-offset="4" style={style}>
-			<h1 data-open-close-icon={isOpen ? 'open' : 'closed'} onMouseDownCapture={onMouseDown} onClick={onClickToggleOpenClose}>Forwarding Graphs</h1>
+            <div  className="CanvasPanelTray-buttons" onClick={onClickToggleOpenClose}>
+                <button
+                    style={{flex: '1 1 auto'}}
+                    className={ClassNames({'-selected': props.displayedPanel === PANEL.FORWARD})}
+                    onMouseDownCapture={onMouseDown}
+                    data-event={PANEL.FORWARD}>
+                    Forwarding Graphs
+                </button>
+
+                <button
+                    style={{flex: '1 1 auto', borderLeft: '1px solid white'}}
+                    className={ClassNames({'-selected': props.displayedPanel === PANEL.PARAMETER})}
+                    onMouseDownCapture={onMouseDown}
+                    data-event={PANEL.PARAMETER}>
+                        Config Parameter Map
+                </button>
+                <div  data-open-close-icon={isOpen ? 'open' : 'closed'}  style={{flex: '0 1', width: '40px', height: '25px', cursor: 'pointer'}} data-event='arrow'>
+
+                </div>
+            </div>
 			<div className="tray-body">
 				{props.children}
 			</div>

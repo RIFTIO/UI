@@ -20,7 +20,9 @@ import RecordViewSource from './recordViewSource.js';
 // import source
 // import AppHeaderActions from 'widgets/header/headerActions.js';
 import Alt from '../alt';
-import _ from 'underscore';
+import _find from 'lodash/find';
+import _indexOf from 'lodash/indexOf';
+import _extend from 'lodash/extend';
 
 class RecordViewStore {
     constructor() {
@@ -136,15 +138,15 @@ class RecordViewStore {
         let vnfrIndex = data.vnfrIndex;
         let configPrimitiveIndex = data.configPrimitiveIndex;
         let payload = {};
-        let isValid = false;
-        let configPrimitive = vnfrs[vnfrIndex]['vnf-configuration']['service-primitive'][configPrimitiveIndex];
+        let isValid = true;
+        let configPrimitive = vnfrs[vnfrIndex]['vnf-configuration']['config-primitive'][configPrimitiveIndex];
 
         payload['name'] = '';
         payload['nsr_id_ref'] = vnfrs[vnfrIndex]['nsr-id-ref'];
         payload['vnf-list'] = [];
         payload['triggered-by'] = 'vnf-primitive';
         let parameters = [];
-        configPrimitive['parameter'].map((parameter) => {
+        configPrimitive['parameter'] && configPrimitive['parameter'].map((parameter) => {
             if(!isValid) {
                 isValid = validateParameter(parameter);
             }
@@ -157,8 +159,11 @@ class RecordViewStore {
         let vnfPrimitive = [];
         vnfPrimitive[0] = {
             name: configPrimitive['name'],
-            index: configPrimitiveIndex,
-            parameter: parameters
+            index: configPrimitiveIndex
+        };
+
+        if (parameters.length > 0) {
+            vnfPrimitive[0].parameter = parameters;
         }
 
         payload['vnf-list'].push({
@@ -407,7 +412,9 @@ function connectionManager(type, connection) {
                 name: nsrs.name,
                 id: nsrs.id,
                 nsd_name: nsrs.nsd_name,
-                type: 'nsr'
+                type: 'nsr',
+                logo: nsrs.nsd && nsrs.nsd.logo,
+                logoId: nsrs.nsd && nsrs.nsd && nsrs.nsd.id
             });
 
             // Scaled VNFRs
@@ -424,10 +431,13 @@ function connectionManager(type, connection) {
 
                     sgInstance['vnfrs'] && sgInstance['vnfrs'].map((vnfr, vnfrIndex) => {
                         scaledVnfrs.push(vnfr);
+                        let vnfrObj = _find(nsrs.vnfrs, {id: vnfr});
                         scaledVnfNav.vnfr.push({
-                            name: _.findWhere(nsrs.vnfrs, {id: vnfr})['short-name'],
+                            name: vnfrObj['short-name'],
                             id: vnfr,
-                            type: 'vnfr'
+                            type: 'vnfr',
+                            logo: vnfrObj['vnfd'] && vnfrObj['vnfd']['logo'],
+                            logoId: vnfrObj['vnfd'] && vnfrObj['vnfd']['id']
                         });
                     });
                     nav.push(scaledVnfNav);
@@ -436,11 +446,13 @@ function connectionManager(type, connection) {
 
             // Non-scaled VNFRs
             nsrs.vnfrs.map(function(vnfr, vnfrIndex) {
-                if (_.indexOf(scaledVnfrs, vnfr.id) == -1) {
+                if (_indexOf(scaledVnfrs, vnfr.id) == -1) {
                     nav.push({
                         name: vnfr["short-name"],
                         id: vnfr.id,
-                        type: 'vnfr'
+                        type: 'vnfr',
+                        logo: vnfr['vnfd'] && vnfr['vnfd']['logo'],
+                        logoId: vnfr['vnfd'] && vnfr['vnfd']['id']
                     });
                 }
             });
@@ -451,7 +463,7 @@ function connectionManager(type, connection) {
             };
         }
 
-        navigatorState = _.extend(navigatorState, {
+        navigatorState = _extend(navigatorState, {
             recordData: recordData,
             recordType: type,
             cardLoading: false,
@@ -462,4 +474,4 @@ function connectionManager(type, connection) {
     };
 }
 
-export default Alt.createStore(RecordViewStore);
+export default Alt.createStore(RecordViewStore, 'RecordViewStore');

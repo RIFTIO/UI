@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,9 @@
  */
 'use strict';
 
-import _ from 'lodash'
+import _pick from 'lodash/pick'
+import _isEqual from 'lodash/isEqual'
+import _cloneDeep from 'lodash/cloneDeep'
 import cc from 'change-case'
 import alt from '../alt'
 import UID from '../libraries/UniqueId'
@@ -34,7 +36,6 @@ import ComposerAppActions from '../actions/ComposerAppActions'
 import CatalogDataSource from '../sources/CatalogDataSource'
 import ComposerAppStore from '../stores/ComposerAppStore'
 import SelectionManager from '../libraries/SelectionManager'
-import ExportSelectorDialog from '../components/ExportSelectorDialog'
 
 const defaults = {
 	catalogs: [],
@@ -44,10 +45,22 @@ const defaults = {
 
 const areCatalogItemsMetaDataEqual = function (a, b) {
 	const metaProps = ['id', 'name', 'short-name', 'description', 'vendor', 'version'];
-	const aMetaData = _.pick(a, metaProps);
-	const bMetaData = _.pick(b, metaProps);
-	return _.isEqual(aMetaData, bMetaData);
+	const aMetaData = _pick(a, metaProps);
+	const bMetaData = _pick(b, metaProps);
+	return _isEqual(aMetaData, bMetaData);
 };
+
+function createItem (type) {
+	let newItem = DescriptorModelMetaFactory.createModelInstanceForType(type);
+	if (newItem){
+		newItem.id = guid();
+		UID.assignUniqueId(newItem.uiState);
+		newItem.uiState.isNew = true;
+		newItem.uiState.modified = true;
+		newItem.uiState['instance-ref-count'] = 0;
+	}
+	return newItem;
+}
 
 class CatalogDataStore {
 
@@ -61,6 +74,14 @@ class CatalogDataStore {
 		this.registerAsync(CatalogDataSource);
 		this.bindActions(CatalogDataSourceActions);
 		this.bindActions(CatalogItemsActions);
+		this.exportPublicMethods({
+            getCatalogs: this.getCatalogs,
+            getCatalogItemById: this.getCatalogItemById,
+            getCatalogItemByUid: this.getCatalogItemByUid,
+            getTransientCatalogs: this.getTransientCatalogs,
+            getTransientCatalogItemById: this.getTransientCatalogItemById,
+            getTransientCatalogItemByUid: this.getTransientCatalogItemByUid
+        });
 	}
 
 	resetSelectionState = () => {
@@ -70,6 +91,10 @@ class CatalogDataStore {
 
 	getCatalogs() {
 		return this.catalogs || (this.catalogs = []);
+	}
+
+	getTransientCatalogs() {
+		return this.state.catalogs || (this.state.catalogs = []);
 	}
 
 	getAllSelectedCatalogItems() {
@@ -95,8 +120,20 @@ class CatalogDataStore {
 		}, [])[0];
 	}
 
+	getTransientCatalogItemById(id) {
+		return this.getTransientCatalogs().reduce((r, catalog) => {
+			return r.concat(catalog.descriptors.filter(d => d.id === id));
+		}, [])[0];
+	}
+
 	getCatalogItemByUid(uid) {
 		return this.getCatalogs().reduce((r, catalog) => {
+			return r.concat(catalog.descriptors.filter(d => UID.from(d) === uid));
+		}, [])[0];
+	}
+
+	getTransientCatalogItemByUid(uid) {
+		return this.getTransientCatalogs().reduce((r, catalog) => {
 			return r.concat(catalog.descriptors.filter(d => UID.from(d) === uid));
 		}, [])[0];
 	}
@@ -109,16 +146,13 @@ class CatalogDataStore {
 	}
 
 	addNewItemToCatalog(newItem) {
-		const id = guid();
 		const type = newItem.uiState.type;
-		newItem.id = id;
-		UID.assignUniqueId(newItem.uiState);
 		this.getCatalogs().filter(d => d.type === type).forEach(catalog => {
 			catalog.descriptors.push(newItem);
 		});
 		// update indexes and integrate new model into catalog
 		this.updateCatalogIndexes(this.getCatalogs());
-		return this.getCatalogItemById(id);
+		return this.getCatalogItemById(newItem.id);
 	}
 
 	updateCatalogIndexes(catalogs) {
@@ -168,7 +202,7 @@ class CatalogDataStore {
 							vnfd.uiState['instance-ref-count'] = instanceRefCount;
 						}
 						// create an instance of this vnfd to carry transient ui state properties
-						const instance = _.cloneDeep(vnfd);
+						const instance = _cloneDeep(vnfd);
 						instance.uiState['member-vnf-index'] = d['member-vnf-index'];
 						instance['vnf-configuration'] = d['vnf-configuration'];
 						instance['start-by-default'] = d['start-by-default'];
@@ -290,7 +324,7 @@ class CatalogDataStore {
 								ComposerAppActions.showError.defer({
 									errorMessage: 'Cannot edit NSD/VNFD with references to instantiated Network Services'
 								});
-								return _.cloneDeep(d);
+								return _cloneDeep(d);
 							} else {
 								item.uiState.modified = modified;
 								requiresSave = true;
@@ -324,7 +358,7 @@ class CatalogDataStore {
 							ComposerAppActions.showError.defer({
 								errorMessage: 'Cannot edit NSD/VNFD with references to instantiated Network Services'
 							});
-							return _.cloneDeep(d);
+							return _cloneDeep(d);
 						} else {
 							itemDescriptor.model.uiState.modified = true;
 							this.addSnapshot(itemDescriptor.model);
@@ -421,40 +455,15 @@ class CatalogDataStore {
 	}
 
 	createCatalogItem(type = 'nsd') {
-		const model = DescriptorModelMetaFactory.createModelInstanceForType(type);
-		if (model) {
-			const newItem = this.addNewItemToCatalog(model);
-			newItem.uiState.isNew = true;
-			newItem.uiState.modified = true;
-			newItem.uiState['instance-ref-count'] = 0;
-			// open the new model for editing in the canvas/details panels
-			setTimeout(() => {
-				this.selectCatalogItem(newItem);
-				CatalogItemsActions.editCatalogItem.defer(newItem);
-			}, 200);
-		}
+		const newItem = createItem(type);
+		this.saveItem(newItem)
 	}
 
 	duplicateSelectedCatalogItem() {
-		const item = this.getFirstSelectedCatalogItem();
-		if (item) {
-			const newItem = _.cloneDeep(item);
-			newItem.name = newItem.name + ' Copy';
-			const nsd = this.addNewItemToCatalog(newItem);
-			this.selectCatalogItem(nsd);
-			nsd.uiState.isNew = true;
-			nsd.uiState.modified = true;
-			nsd.uiState['instance-ref-count'] = 0;
-			// note duplicated items get a new id, map the layout position
-			// of the old id to the new id in order to preserve the layout
-			if (nsd.uiState.containerPositionMap) {
-				nsd.uiState.containerPositionMap[nsd.id] = nsd.uiState.containerPositionMap[item.id];
-				delete nsd.uiState.containerPositionMap[item.id];
-			}
-			setTimeout(() => {
-				this.selectCatalogItem(nsd);
-				CatalogItemsActions.editCatalogItem.defer(nsd);
-			}, 200);
+		// make request to backend to duplicate an item
+		const srcItem = this.getFirstSelectedCatalogItem();
+		if (srcItem) {
+			CatalogPackageManagerActions.copyCatalogPackage.defer(srcItem);
 		}
 	}
 
@@ -513,7 +522,13 @@ class CatalogDataStore {
 	saveCatalogItem() {
 		const activeItem = ComposerAppStore.getState().item;
 		if (activeItem) {
-			if (activeItem.uiState['instance-ref-count'] > 0) {
+			this.saveItem(activeItem);
+		}
+	}
+
+	saveItem(item) {
+		if (item) {
+			if (item.uiState['instance-ref-count'] > 0) {
 				console.log('cannot save NSD/VNFD with references to instantiated Network Services');
 				ComposerAppActions.showError.defer({
 					errorMessage: 'Cannot save NSD/VNFD with references to instantiated Network Services'
@@ -521,84 +536,52 @@ class CatalogDataStore {
 				return;
 			}
 			const success = () => {
-				delete activeItem.uiState.isNew;
-				delete activeItem.uiState.modified;
-				this.updateCatalogItem(activeItem);
+				delete item.uiState.modified;
+				if (item.uiState.isNew) {
+					this.addNewItemToCatalog(item);
+					delete item.uiState.isNew;
+				} else {
+					this.updateCatalogItem(item);
+				}
 				// TODO should the save action clear the undo/redo stack back to the beginning?
-				this.resetSnapshots(activeItem);
+				this.resetSnapshots(item);
 				ModalOverlayActions.hideModalOverlay.defer();
-				CatalogItemsActions.editCatalogItem.defer(activeItem);
+				CatalogItemsActions.editCatalogItem.defer(item);
 			};
 			const failure = () => {
 				ModalOverlayActions.hideModalOverlay.defer();
-				CatalogItemsActions.editCatalogItem.defer(activeItem);
+				CatalogItemsActions.editCatalogItem.defer(item);
 			};
 			const exception = () => {
-				console.warn('unable to save catalog item', activeItem);
+				console.warn('unable to save catalog item', item);
 				ModalOverlayActions.hideModalOverlay.defer();
-				CatalogItemsActions.editCatalogItem.defer(activeItem);
+				CatalogItemsActions.editCatalogItem.defer(item);
 			};
 			ModalOverlayActions.showModalOverlay.defer();
-			this.getInstance().saveCatalogItem(activeItem).then(success, failure).catch(exception);
+			this.getInstance().saveCatalogItem(item).then(success, failure).catch(exception);
 		}
 	}
 
 	exportSelectedCatalogItems(draggedItem) {
-		const onSelectFormat = (selectedFormat, event) => {
-			this.setState({
-				selectedFormat: selectedFormat
-			});
-		};
-
-		const onSelectGrammar = (selectedGrammar, event) => {
-			this.setState({
-				selectedGrammar: selectedGrammar
-			});
-		}
-
-
-		const onCancel = () => {
-			this.resetSelectionState();
-			ModalOverlayActions.hideModalOverlay();
-		};
-
-		const onDownload = (event) => {
-			CatalogPackageManagerActions.downloadCatalogPackage.defer({
-				selectedItems: selectedItems,
-				selectedFormat: this.selectedFormat,
-				selectedGrammar: this.selectedGrammar
-			});
-			this.resetSelectionState();
-			ModalOverlayActions.hideModalOverlay();
-			return;
-		}
-
-		if (draggedItem) {
-			// if item is given make sure it is also selected
-			//draggedItem.uiState.selected = true;
-			SelectionManager.addSelection(draggedItem);
-			this.updateCatalogItem(draggedItem);
-		}
 		// collect the selected items and delegate to the catalog package manager action creator
 		const selectedItems = this.getAllSelectedCatalogItems();
 		if (selectedItems.length) {
-			CatalogDataStore.chooseExportFormat(onSelectFormat, onSelectGrammar, onDownload, onCancel);
+			CatalogPackageManagerActions.downloadCatalogPackage.defer({
+				selectedItems: selectedItems,
+				selectedFormat: 'mano',
+				selectedGrammar: 'osm'
+			});
+			this.resetSelectionState();
 		}
 	}
-
-	static chooseExportFormat(onSelectFormat, onSelectGrammar, onDownload, onCancel) {
-		ModalOverlayActions.showModalOverlay.defer(
-			<ExportSelectorDialog
-				onSelectFormat={onSelectFormat}
-				onSelectGrammar={onSelectGrammar}
-				onCancel={onCancel}
-				onDownload={onDownload}
-				currentlySelectedFormat='mano'
-				currentlySelectedGrammar='osm'
-			/>
-		);
+	saveCatalogItemError(data){
+		let error = JSON.parse(data.error.responseText);
+		const errorMsg = error && error.body && error.body['rpc-reply'] && JSON.stringify(error.body['rpc-reply']['rpc-error'], null, ' ')
+		ComposerAppActions.showError.defer({
+			errorMessage: 'Unable to save the descriptor.\n' + errorMsg
+		});
 	}
-
 }
 
 export default alt.createStore(CatalogDataStore, 'CatalogDataStore');
+

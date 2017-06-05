@@ -24,7 +24,6 @@ import SkyquakeContainerActions from './skyquakeContainerActions.js'
 import SkyquakeContainerStore from './skyquakeContainerStore.js';
 // import Breadcrumbs from 'react-breadcrumbs';
 import Utils from 'utils/utils.js';
-import _ from 'lodash';
 import Crouton from 'react-crouton';
 import ScreenLoader from 'widgets/screen-loader/screenLoader.jsx';
 import './skyquakeApp.scss';
@@ -107,6 +106,7 @@ export default class skyquakeContainer extends React.Component {
                             type={notificationType}
                             hidden={!(displayNotification && notificationMessage)}
                             onDismiss={SkyquakeContainerActions.hideNotification}
+                            timeout= {5000}
                         />
                         <ScreenLoader show={displayScreenLoader}/>
                         <SkyquakeNav nav={this.state.nav}

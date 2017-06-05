@@ -18,65 +18,108 @@
  */
 'use strict';
 
-import $ from 'jquery'
 import alt from '../alt'
-import utils from '../libraries/utils'
+import catalogUtils from '../libraries/utils'
 import CatalogPackageManagerActions from '../actions/CatalogPackageManagerActions'
-let Utils = require('utils/utils.js');
-function getApiServerOrigin() {
-	return utils.getSearchParams(window.location).upload_server + ':4567';
-}
+import Utils from 'utils/utils.js';
 
-function ajaxRequest(path, catalogPackage, resolve, reject, method = 'GET') {
-	$.ajax({
-		url: getApiServerOrigin() + path,
-		type: method,
-		beforeSend: Utils.addAuthorizationStub,
-		dataType: 'json',
-		success: function(data) {
-			if (typeof data == 'string') {
-				data = JSON.parse(data);
-			}
-			resolve({
-				data: data,
-				state: catalogPackage
-			});
-		},
-		error: function(error) {
-			if (typeof error == 'string') {
-				error = JSON.parse(error);
-			}
-			reject({
-				data: error,
-				state: catalogPackage
-			});
+const getAuthorization = () => 'Basic ' + window.sessionStorage.getItem("auth");
+
+const getStateApiPath = (operation, id) => 
+	catalogUtils.getSearchParams(window.location).upload_server + ':4567/api/' + operation + '/' + id + '/state';
+
+const getComposerApiPath = (api) =>
+	window.location.origin + '/composer/api/' + api + '?api_server=' + catalogUtils.getSearchParams(window.location).api_server;
+
+const SUCCESS = {
+		pending: false,
+		success: true,
+		error: false,
+		message: "Completely successfully"
+	};
+const FAILED = {
+		pending: false,
+		success: false,
+		error: true,
+		message: "Failed"
+	};
+const PENDING = {
+		pending: true,
+		success: false,
+		error: false,
+		message: "In progress"
+	};
+
+function ajaxFetch(url, operation, resolve, reject, method = 'GET', input, urlOverride) {
+	let credentials = 'same-origin';
+	let body = input ? JSON.stringify(input) : null;
+	let headers = new Headers();
+	headers.append('Authorization', getAuthorization());
+	headers.append('Accept', 'application/json');
+	if (input) {
+		headers.append('Content-Type', 'application/json');
+	}
+
+	fetch(url, {method, credentials, headers, body})
+		.then(checkStatusGetJson)
+		.then(handleSuccess)
+		.catch(handleError);
+
+	function checkStatusGetJson(response) {
+		if (response.status >= 200 && response.status < 300) {
+			return response.json();
+		} else {
+			var error = new Error(response.statusText)
+			error.status = response.status;
+			error.statusText = response.statusText;
+			throw error
 		}
-	}).fail(function(xhr){
-			            //Authentication and the handling of fail states should be wrapped up into a connection class.
-			            Utils.checkAuthentication(xhr.status);
-		          	});
+	}
+
+	function handleSuccess (data) {
+		if (typeof data == 'string') {
+			data = JSON.parse(data);
+		}
+		resolve({
+			state: operation,
+			data,
+			operation
+		});
+	}
+
+	function handleError (data) {
+		if (typeof data == 'string') {
+			data = JSON.parse(data);
+		}
+		reject({
+			state: operation,
+			data,
+			operation
+		});
+	}
 }
 
 const CatalogPackageManagerSource = {
 
 	requestCatalogPackageDownload: function () {
 		return {
-			remote: function (state, download, format, grammar) {
+			remote: function (state, download, format, grammar, schema) {
 				return new Promise((resolve, reject) => {
-					// the server does not add a status in the payload
-					// so we add one so that the success handler will
-					// be able to follow the flow of this download
-					const setStatusBeforeResolve = (response = {}) => {
+					// we need an initial status for UI (server does not send)
+					const setStatusBeforeResolve = (response) => {
 						response.data.status = 'download-requested';
 						resolve(response);
 					};
-					// RIFT-13485 requires to send type (nsd/vnfd) as a path element.
-					// Backend no longer supports mixed multi-package download.
-					// Probably does not even support multi-package download of same type.
-					// Hence, pick the type from the first element.
-					const path = '/api/export/' + download['catalogItems'][0]['uiState']['type'] + '?schema=' + format + '&grammar=' + grammar + '&format=yaml&ids=' + download.ids;
-					ajaxRequest(path, download, setStatusBeforeResolve, reject);
-				});
+					const data = {
+						"package-type": download['catalogItems'][0]['uiState']['type'].toUpperCase(),
+						"package-id": download.ids,
+						"export-format": format && format.toUpperCase() || 'YAML',
+						"export-grammar": grammar && grammar.toUpperCase() || 'OSM',
+						"export-schema": schema && schema.toUpperCase() || "RIFT"
+					}
+					const path = getComposerApiPath('package-export');
+					ajaxFetch(path, download, setStatusBeforeResolve, reject, 'POST', data, true);
+				})
 			},
 			success: CatalogPackageManagerActions.downloadCatalogPackageStatusUpdated,
 			error: CatalogPackageManagerActions.downloadCatalogPackageError
@@ -88,12 +131,66 @@ const CatalogPackageManagerSource = {
 			remote: function(state, download) {
 				const transactionId = download.transactionId;
 				return new Promise(function(resolve, reject) {
-					const path = '/api/export/' + transactionId + '/state';
-					ajaxRequest(path, download, resolve, reject);
+					const path = getStateApiPath('export', transactionId);
+					ajaxFetch(path, download, resolve, reject);
 				});
 			},
 			success: CatalogPackageManagerActions.downloadCatalogPackageStatusUpdated,
 			error: CatalogPackageManagerActions.downloadCatalogPackageError
+		}
+	},
+
+	requestCatalogPackageCopy: function () {
+		return {
+			remote: function (state, operationInfo) {
+				return new Promise((resolve, reject) => {
+					// we need an initial status for UI (server does not send)
+					const successHandler = (response) => {
+						const status = response.data.output.status;
+						const state = status === "COMPLETED" ? SUCCESS : status === "FAILED" ? FAILED : PENDING;
+						state.progress = 25; // put something
+						let operation = Object.assign({}, operationInfo, state);
+						operation.transactionId = response.data.output['transaction-id'];
+						resolve(operation);
+					}
+					const failHandler = (response) => {
+						let operation = Object.assign({}, this, FAILED);
+						reject(operation);
+					};
+					const data = {
+						"package-type": operationInfo.args.packageType,
+						"package-id": operationInfo.args.id,
+						"package-name": operationInfo.args.name
+					}
+					const path = getComposerApiPath('package-copy');
+					ajaxFetch(path, operationInfo, successHandler, failHandler, 'POST', data, true);
+				})
+			},
+			success: CatalogPackageManagerActions.updateStatus,
+			error: CatalogPackageManagerActions.updateStatus
+		};
+	},
+
+	requestCatalogPackageCopyStatus: function() {
+		return {
+			remote: function(state, operation) {
+				return new Promise(function(resolve, reject) {
+					const successHandler = (response) => {
+						const status = response.data.status;
+						const state = status === "COMPLETED" ? SUCCESS : status === "FAILED" ? FAILED : PENDING;
+						state.progress = state.pending ? operation.progress + ((100 - operation.progress) / 2) : 100;
+						let newOp = Object.assign({}, operation, state);
+						resolve(newOp);
+					};
+					const failHandler = (response) => {
+						reject(Object.assign({}, operation, FAILED));
+					};
+					const path = getComposerApiPath('package-manager/jobs/' + operation.transactionId);
+					ajaxFetch(path, operation, successHandler, failHandler);
+				});
+			},
+			success: CatalogPackageManagerActions.updateStatus,
+			error: CatalogPackageManagerActions.updateStatus
 		}
 	},
 
@@ -103,8 +200,8 @@ const CatalogPackageManagerSource = {
 				const transactionId = upload.transactionId;
 				return new Promise(function (resolve, reject) {
 					const action = upload.riftAction === 'onboard' ? 'upload' : 'update';
-					const path = '/api/' + action + '/' + transactionId + '/state';
-					ajaxRequest(path, upload, resolve, reject);
+					const path = getStateApiPath(action, transactionId);
+					ajaxFetch(path, upload, resolve, reject);
 				});
 			},
 			success: CatalogPackageManagerActions.uploadCatalogPackageStatusUpdated,

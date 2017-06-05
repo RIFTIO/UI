@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +28,7 @@
 	min-width: 300px;
 	overflow: hidden;
 	z-index: 1;
+
 	.CanvasPanelHeader {
 		h1 {
 			margin: 0;
@@ -45,5 +46,23 @@
 	.CanvasPanelBody {
 		position: absolute;
 		bottom: 0;
+		top: 142px;
+	}
+	.CanvasPanelTabs {
+	    height: 32px;
+        margin-top: 49px;
+	    background-color: #cbd1d1;
+	    .CatalogFilter {
+			max-width:25%;
+		    margin-left: 1rem;
+	        margin-top: 3px;
+			button {
+			    -ms-flex-pack: center;
+		        justify-content: center;
+			    &.-selected {
+			    	background:#e5e5e5;
+			    }
+			}
+	    }
 	}
 }

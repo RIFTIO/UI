@@ -2,7 +2,6 @@
  * Created by onvelocity on 2/10/16.
  */
 import alt from '../../../alt'
-import _ from 'lodash'
 import d3 from 'd3'
 import math from '../math'
 import ClassNames from 'classnames'

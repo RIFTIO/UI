@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,6 +55,7 @@ export default class AppHeader extends React.Component {
                 type={"error"}
                 hidden={!(this.state.validateErrorEvent && this.state.validateErrorMsg)}
                 onDismiss={HeaderStore.validateReset}
+                timeout= {5000}
             />
 
         // html = (

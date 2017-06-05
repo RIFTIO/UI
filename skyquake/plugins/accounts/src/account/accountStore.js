@@ -70,11 +70,78 @@ let AccountMeta = {
             }, {
                 label: "URL",
                 ref: 'url'
-            }]
+            }],
+
+            "openstack": [{
+                label: "Key",
+                ref: 'key'
+            },{
+                label: "Secret",
+                ref: 'secret'
+            },{
+                label: "Authentication URL",
+                ref: 'auth_url'
+            },{
+                label: "Tenant",
+                ref: 'tenant'
+            },{
+                label: "User domain",
+                ref: 'user-domain',
+                optional: true
+            },{
+                label: "Project domain",
+                ref: 'project-domain',
+                optional: true
+            },{
+                label: "Region",
+                ref: 'region',
+                optional: true
+            }
+            // ,{
+            //     label: "admin",
+            //     ref: 'admin',
+            //     default: false,
+            //     optional: true
+            // }
+            // ,{
+            //    label: "Management Network",
+            //    ref: 'mgmt-network'
+            // }
+            // ,{
+            //     label: "Plugin Name",
+            //     ref: 'plugin-name',
+            //     optional: true
+            // },{
+            //     label: "Security Groups",
+            //     ref: 'security-groups',
+            //     type: 'list',
+            //     optional: true
+            // },{
+            //     label: "Dynamic Flavor Support ",
+            //     ref: 'dynamic-flavor-support',
+            //     type: 'boolean',
+            //     optional: true
+            // }
+            //, {
+            //    label: "Floating IP Pool",
+            //    ref: 'floating-ip-pool',
+            //    optional: true
+            // }
+            // ,{
+            //     label: "Certificate Validation",
+            //     ref: 'cert-validate',
+            //     type: 'boolean',
+            //     optional: true
+            // }
+            ]
+
         },
         types: [{
             "name": "ODL",
             "account-type": "odl",
+        },{
+            "name": "OpenStack",
+            "account-type": "openstack",
         }]
     },
     'cloud': {
@@ -122,9 +189,21 @@ let AccountMeta = {
                 label: 'Management Network',
                 ref: 'mgmt-network'
             }, {
-                label: 'Floating IP Pool',
+                label: 'Floating IP Pool Network Name',
                 ref: 'floating-ip-pool',
                 optional: true
+            }, {
+                label: "User Domain",
+                ref: 'user-domain',
+                optional: true
+            }, {
+                label: "Project Domain",
+                ref: 'project-domain',
+                optional: true
+            }, {
+              label: "Region",
+              ref: 'region',
+              optional: true
             }],
             "openvim": [{
                 label: "Host",
@@ -265,7 +344,7 @@ export default class AccountStore {
     }
     getResourceOrchestratorSuccess = (data) => {
         this.alt.actions.global.hideScreenLoader.defer();
-        if(data['account-type'] == 'openmano') {
+        if(data['rw-launchpad:resource-orchestrator'] && (data['rw-launchpad:resource-orchestrator']['account-type'] == 'openmano')) {
             this.setState({
                 showVIM: false
             })
@@ -407,7 +486,7 @@ export default class AccountStore {
         temp.name = this.account.name;
         temp['account-type'] = event.target.value;
         temp.params= AccountMeta[this.accountType].params[event.target.value];
-        temp.nestedParams = AccountMeta[this.accountType]?AccountMeta[this.accountType].nestedParams[event.target.value]:null;
+        temp.nestedParams = (AccountMeta[this.accountType] && AccountMeta[this.accountType].nestedParams )?AccountMeta[this.accountType].nestedParams[event.target.value]:null;
         temp[event.target.value] = {};
         this.setState({
             account: temp

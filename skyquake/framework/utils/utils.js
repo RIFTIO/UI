@@ -18,9 +18,9 @@
 //Login needs to be refactored. Too many cross dependencies
 var AuthActions = require('../widgets/login/loginAuthActions.js');
 var $ = require('jquery');
-var rw = require('utils/rw.js');
+import rw from './rw.js';
 var API_SERVER = rw.getSearchParams(window.location).api_server;
-let NODE_PORT = require('utils/rw.js').getSearchParams(window.location).api_port || ((window.location.protocol == 'https:') ? 8443 : 8000);
+let NODE_PORT = rw.getSearchParams(window.location).api_port || ((window.location.protocol == 'https:') ? 8443 : 8000);
 var SockJS = require('sockjs-client');
 
 var Utils = {};
@@ -75,14 +75,19 @@ Utils.setupMultiplexClient = function() {
     loadChecker();
 };
 
-Utils.checkAndResolveSocketRequest = function(data, resolve, reject) {
+Utils.checkAndResolveSocketRequest = function(data, resolve, reject, successCallback) {
     const checker = () => {
         if (!Utils.isMultiplexerLoaded()) {
             setTimeout(() => {
                 checker();
             }, 500);
         } else {
-            resolve(data.id);
+            if (!successCallback) {
+                resolve(data.id);
+            } else {
+                //resolve handled in callback
+                successCallback(data.id)
+            }
         }
     };
 
@@ -189,7 +194,7 @@ Utils.setAuthentication = function(username, password, cb) {
     window.sessionStorage.setItem("auth", AuthBase64);
     self.detectInactivity();
     $.ajax({
-            url: '//' + window.location.hostname + ':' + NODE_PORT + '/check-auth?api_server=' + API_SERVER,
+            url: '//' + window.location.hostname + ':' + window.location.port + '/check-auth?api_server=' + API_SERVER,
             type: 'GET',
             beforeSend: Utils.addAuthorizationStub,
             success: function(data) {
@@ -293,6 +298,22 @@ Utils.arrayIntersperse = (arr, sep) => {
     return arr.slice(1).reduce((xs, x, i) => {
         return xs.concat([sep, x]);
     }, [arr[0]]);
+}
+
+Utils.cleanImageDataURI = (imageString, type, id) => {
+    if (/\bbase64\b/g.test(imageString)) {
+        return imageString;
+    } else if (/<\?xml\b/g.test(imageString)) {
+        const imgStr = imageString.substring(imageString.indexOf('<?xml'));
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(imgStr);
+    } else if (/\.(svg|png|gif|jpeg|jpg)$/.test(imageString)) {
+        return '/composer/assets/logos/' + type + '/' + id + '/' + imageString;
+        // return require('../images/logos/' + imageString);
+    }
+    if(type == 'nsd' || type == 'vnfd') {
+        return require('style/img/catalog-'+type+'-default.svg');
+    }
+    return require('style/img/catalog-default.svg');
 }
 
 module.exports = Utils;

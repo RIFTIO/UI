@@ -27,7 +27,8 @@ export default {
 	nsd: common.concat(['constituent-vnfd', 'vnffgd', 'vld']),
 	vld: common.concat([]),
 	vnfd: common.concat(['vdu', 'internal-vld']),
-	'vnfd.vdu': common.concat(['image', 'external-interface', 'vm-flavor', 'cloud-init', 'filename']),
+	'vnfd.vdu': common.concat(['image', 'image-checksum', 'external-interface', 'vm-flavor', 'cloud-init', 'filename']),
+    'nsd.config-parameter-map': common.concat([]),
 	// white-list valid fields to send in the meta field
 	meta: ['containerPositionMap']
 };

@@ -21,7 +21,6 @@
  */
 'use strict';
 
-import _ from 'lodash'
 import d3 from 'd3'
 import math from './math'
 import ClassNames from 'classnames'

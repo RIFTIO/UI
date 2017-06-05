@@ -132,4 +132,4 @@ class TopologyL2Store {
         });
     }
 }
-    export default Alt.createStore(TopologyL2Store);
+    export default Alt.createStore(TopologyL2Store, 'TopologyL2Store');

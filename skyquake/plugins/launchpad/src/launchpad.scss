@@ -130,8 +130,16 @@
     }
 
     &-body {
-      -ms-flex-flow: col wrap;
-          flex-flow: col wrap;
+      -ms-flex-flow: column wrap;
+          flex-flow: column wrap;
+    }
+
+    .nsrSummary {
+      font-size: 50%;
+      padding-top: 1rem;
+      .nsrSummaryItem {
+        padding-right: 0.5rem;
+      }
     }
   }
 

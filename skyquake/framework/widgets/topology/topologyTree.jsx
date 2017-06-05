@@ -20,7 +20,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import d3 from 'd3';
 import DashboardCard from '../dashboard_card/dashboard_card.jsx';
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
 import $ from 'jquery';
 import './topologyTree.scss';
 
@@ -66,7 +66,7 @@ export default class TopologyTree extends React.Component {
             //this.props.selectNode(props.data);
         }
         if(this.svg) {
-          this.update(_.cloneDeep(props.data));
+          this.update(_cloneDeep(props.data));
           // this.selectedID = props.data.id;
         }
     }

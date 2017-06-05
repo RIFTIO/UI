@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ app.get('/api/nsr', cors(), function(req, res) {
         launchpadAPI['nsr'].delete(req).then(function(response) {
             utils.sendSuccessResponse(response, res);
         }, function(error) {
-            sendErrorResponse(error, res);
+            utils.sendErrorResponse(error, res);
         });
     });
     app.post('/api/nsr', cors(), function(req, res) {

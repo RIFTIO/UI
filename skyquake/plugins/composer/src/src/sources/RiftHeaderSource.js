@@ -31,7 +31,7 @@ function getApiServerOrigin() {
 }
 function ajaxRequest(path, catalogPackage, resolve, reject, method = 'GET') {
 	$.ajax({
-		url: '//' + window.location.hostname + ':' + getApiServerOrigin() + path,
+		url: '//' + window.location.hostname + ':' + window.location.port + path,
 		type: method,
 		beforeSend: utils.addAuthorizationStub,
 		dataType: 'json',

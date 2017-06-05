@@ -67,6 +67,26 @@
     }
     &--details {
         font-size:0.75rem;
+
+        >div {
+            display: flex;
+            >div {
+                display: flex;
+                padding: 1em 0 0 1em;
+            }
+        }
+
+        &--tree {
+                display: flex;
+                flex-direction: column;
+
+                .tree-view {
+                    min-height: 300px;
+                    min-width: 580px;
+                    overflow-y: scroll;
+                }
+            }
+
         h4 {
             padding-bottom:0.5rem;
             text-decoration:underline;

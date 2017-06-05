@@ -18,7 +18,6 @@
  */
 'use strict';
 
-import _ from 'lodash'
 import $ from 'jquery'
 import alt from '../alt'
 import utils from '../libraries/utils'

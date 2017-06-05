@@ -20,13 +20,29 @@ import React from 'react';
 import RecordViewActions from './recordViewActions.js';
 import LoadingIndicator from 'widgets/loading-indicator/loadingIndicator.jsx';
 import DashboardCard from 'widgets/dashboard_card/dashboard_card.jsx';
+import Utils from 'utils/utils.js';
+
 import './recordNavigator.scss';
-import nsdImg from 'style/img/catalog-default.svg';
 
 export default class RecordNavigator extends React.Component{
   constructor(props) {
     super(props)
   }
+  handleImageError = (e) => {
+      console.log('Bad logo path, using default');
+      e.target.src = require('style/img/catalog-default.svg');
+  }
+
+  getDescriptorTypeFromRecordType = (recordType) => {
+      if (recordType == 'nsr') {
+          return 'nsd';
+      } else if (recordType == 'vnfr') {
+          return 'vnfd';
+      }
+
+      return null;
+  }
+
   render(){
     let navClass = 'catalogItems';
 
@@ -53,7 +69,10 @@ export default class RecordNavigator extends React.Component{
           }
           navObj.push(
             <div key={'id' + k + '-' + vnfr.id}  onClick={self.props.loadRecord.bind(self,vnfr)} className={iClassName}>
-              <img src={nsdImg} />
+              <img
+                  onError={self.handleImageError}
+                  src={Utils.cleanImageDataURI(vnfr.logo, self.getDescriptorTypeFromRecordType(vnfr.type), vnfr.logoId)}
+              />
               <section id={vnfr.id}>
               <h1 title={vnfr.name}>{vnfr.name}</h1>
                 <h2>{vnfr.type}</h2>
@@ -67,7 +86,10 @@ export default class RecordNavigator extends React.Component{
         }
         navObj.push(
           <div key={'id' + k + '-' + n.id}  onClick={self.props.loadRecord.bind(self,n)} className={itemClassName}>
-            <img src={nsdImg} />
+            <img
+                onError={self.handleImageError}
+                src={Utils.cleanImageDataURI(n.logo, self.getDescriptorTypeFromRecordType(n.type), n.logoId)}
+            />
             <section id={n.id}>
             <h1 title={n.name}>{n.name}</h1>
               <h2>{n.type}</h2>

@@ -32,7 +32,7 @@ import PlacementGroupsInfo from './placementGroupsInfo.jsx';
 import JobListCard from '../launchpad_card/jobListCard.jsx';
 import NSVirtualLinks from '../virtual_links/nsVirtualLinks.jsx';
 import LaunchpadFleetStore from '../launchpadFleetStore.js';
-
+import _forEach from 'lodash/forEach';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism.css';
 
@@ -106,7 +106,7 @@ export default class RecordCard extends React.Component {
                         //That match the currently selected job id
                         if(v.id == cardData.id) {
                           return v.primitive.map(function(p, i) {
-                            return <JobListCard type="vnfr" job-id={job['job-id']} cardData={cardData} key={ob['job-id'] + '-' + i} {...p} />
+                            return <JobListCard type="vnfr" job-id={job['job-id']} cardData={cardData} key={job['job-id'] + '-' + i} {...p} />
                           })
                         }
                       })
@@ -142,12 +142,12 @@ export default class RecordCard extends React.Component {
                 //     </pre>
                 function buildProperties(obj) {
                   let p = [];
-                    _.forEach(obj, function(v, k) {
+                    _forEach(obj, function(v, k) {
                     p.push(
-                      <div style={{margin: '0.5rem 0.5rem'}} key={k + vi}>
+                      <div style={{margin: '0.5rem 0.5rem'}} key={k + '-' + vi}>
                         <div style={{margin: '0 0.5rem',
     fontWeight: 'bold', textTransform: 'uppercase', color: '#5b5b5b'}}>{k}</div>
-                        <div style={{margin: '0 0.5rem'}}>{v.constructor.name != 'Object' ? v : buildProperties(v)}</div>
+                        <div style={{margin: '0 0.5rem'}}>{(v.constructor.name == 'String' || v.constructor.name == 'Number') ? v : buildProperties(v)}</div>
                       </div>
                     )
                   });
@@ -208,7 +208,7 @@ export default class RecordCard extends React.Component {
                         //That match the currently selected job id
                         if(v.id == cardData.id) {
                           return v.primitive.map(function(p, i) {
-                            return <JobListCard type="vnfr" job-id={job['job-id']} cardData={cardData} key={ob['job-id'] + '-' + 'vnfr' + '-' + h} {...p} />
+                            return <JobListCard type="vnfr" job-id={job['job-id']} cardData={cardData} key={job['job-id'] + '-' + 'vnfr' + '-' + h} {...p} />
                           })
                         }
                       })
@@ -266,7 +266,7 @@ export default class RecordCard extends React.Component {
       if(this.props.isLoading) {
         html = <DashboardCard className="loading" showHeader={true} title={cardData["short-name"]}><LoadingIndicator size={10} show={true} /></DashboardCard>
       } else {
-        let glyphValue = (this.props.mmmrecordDetailsToggleValue) ? "chevron-left" : "chevron-right";
+        let glyphValue = (!this.props.recordDetailsToggleValue) ? "chevron-left" : "chevron-right";
 
         if (this.props.type == 'nsr') {
           tabList.push(
@@ -329,7 +329,7 @@ export default class RecordCard extends React.Component {
           if (this.props.type == 'nsr') {
             primitivesTabTitle = 'Service Primitive';
           } else if (this.props.type == 'vnfr') {
-            primitivesTabTitle = 'Service Primitive'
+            primitivesTabTitle = 'Config Primitive'
           }
 
           tabList.push(
@@ -369,11 +369,11 @@ export default class RecordCard extends React.Component {
           consoleUrlsTabTitle = 'VDU Console Links';
 
           tabList.push(
-            <Tab key={cardData.id + '-cp'}>{consoleUrlsTabTitle}</Tab>
+            <Tab key={cardData.id + '-vducl'}>{consoleUrlsTabTitle}</Tab>
           );
 
           tabPanels.push(
-            <TabPanel key={cardData.id + '-cp-panel'}>
+            <TabPanel key={cardData.id + '-vducl-panel'}>
               <div className="consoleUrls">
                 {consoleUrlsComponent}
               </div>

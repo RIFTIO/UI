@@ -54,5 +54,5 @@ CreateFleet.prototype.validateReset = function() {
   });
 };
 
-module.exports = alt.createStore(CreateFleet);
+module.exports = alt.createStore(CreateFleet, 'CreateFleet');
 

@@ -18,6 +18,7 @@
 
 import React from 'react';
 import './jobListCard.scss'
+import TreeView from 'react-treeview';
 import Uptime from 'widgets/uptime/uptime.jsx';
 import Modal from 'react-awesome-modal';
 
@@ -57,16 +58,25 @@ class JobListCard extends React.Component {
     getJobDetails(job) {
         let jobDetails = null;
         if (job['job-status-details']) {
+            let jobDetailsArray = job['job-status-details'].split(/\\n/);
+            let jobDetailsText = [];
+            jobDetailsArray && jobDetailsArray.map((jobDetail) => {
+                jobDetailsText.push(jobDetail);
+                jobDetailsText.push(<br/>);
+            });
             jobDetails = (
                 <section className='jobListCard--details'>
                     <h4 onClick={this.openModal.bind(this)}>Job Details</h4>
                     <Modal
+                        className='jobListCard--details--modal'
                         visible={this.state.modalVisible}
                         width="600"
                         height="400"
                         effect="fadeInUp">
-                        <div>
-                            <div className='jobListCard--details--content'>{job['job-status-details']}</div>
+                        <div className='jobListCard--details--tree'>
+                            <TreeView nodeLabel={<span>Job Details</span>} key={'job-details'} defaultCollapsed={false}>
+                                <p>{jobDetailsText}</p>
+                            </TreeView>
                             <h4 className='jobListCard--details--close' onClick={this.closeModal.bind(this)}>Close</h4>
                         </div>
                     </Modal>

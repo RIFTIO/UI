@@ -20,7 +20,6 @@
  * Created by onvelocity on 10/2/15.
  */
 
-import _ from 'lodash'
 import d3 from 'd3'
 import UID from './UniqueId'
 import SelectionManager from './SelectionManager'

@@ -74,4 +74,10 @@ constants.SOCKET_POOL_LENGTH = 20;
 constants.SERVER_PORT = process.env.SERVER_PORT || 8000;
 constants.SECURE_SERVER_PORT = process.env.SECURE_SERVER_PORT || 8443;
 
+constants.BASE_PACKAGE_UPLOAD_DESTINATION = 'upload/packages/';
+constants.PACKAGE_MANAGER_SERVER_PORT = 4567;
+constants.PACKAGE_FILE_DELETE_DELAY_MILLISECONDS = 3 * 1000 * 60; //5 minutes
+constants.PACKAGE_FILE_ONBOARD_TRANSACTION_STATUS_CHECK_DELAY_MILLISECONDS = 2 * 1000; //2 seconds
+
+
 module.exports = constants;

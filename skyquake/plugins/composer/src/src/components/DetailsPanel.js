@@ -18,7 +18,7 @@
  */
 'use strict';
 
-import _ from 'lodash'
+import _cloneDeep from 'lodash/cloneDeep'
 import React from 'react';
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 import messages from './messages'
@@ -57,7 +57,7 @@ const DetailsPanel = React.createClass({
 		const selectedContainer = selected[0];
 		if (selectedContainer) {
 			bodyComponent = <CatalogItemDetailsEditor container={selectedContainer} width={this.props.layout.right} />;
-			const edit = _.cloneDeep(selectedContainer.model);
+			const edit = _cloneDeep(selectedContainer.model);
 			json = serializers.serialize(edit) || edit;
 		}
 		const jsonViewerTitle = selectedContainer ? selectedContainer.model.name : 'nothing selected';

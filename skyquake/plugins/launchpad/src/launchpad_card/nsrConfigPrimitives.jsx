@@ -43,7 +43,7 @@ class NsrConfigPrimitives extends React.Component {
                 vnfrConfigPrimitive.name = vnfr['short-name'];
                 vnfrConfigPrimitive['vnfr-id-ref'] = vnfr['id'];
                 //input references
-                let configPrimitives = vnfr['vnf-configuration']['service-primitive'];
+                let configPrimitives = vnfr['vnf-configuration'] && vnfr['vnf-configuration']['service-primitive'];
                 //input references by key
                 let vnfrConfigPrimitives = {}
 

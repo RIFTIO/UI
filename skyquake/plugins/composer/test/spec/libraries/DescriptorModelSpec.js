@@ -21,7 +21,6 @@
 /*global describe, beforeEach, it, expect, xit */
 
 'use strict';
-import _ from 'lodash'
 import DescriptorModel from 'libraries/model/DescriptorModel'
 
 class TestDescriptorModel extends DescriptorModel {

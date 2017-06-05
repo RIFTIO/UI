@@ -27,7 +27,7 @@ import '../../node_modules/open-iconic/font/css/open-iconic.css';
 class SshKeys extends Component {
     constructor(props) {
         super(props);
-        this.Store = this.props.flux.stores.hasOwnProperty('SshKeyStore') ? this.props.flux.stores.SshKeyStore : this.props.flux.createStore(SshKeyStore);
+        this.Store = this.props.flux.stores.hasOwnProperty('SshKeyStore') ? this.props.flux.stores.SshKeyStore : this.props.flux.createStore(SshKeyStore, 'SshKeyStore');
         this.state = this.Store.getState();
         this.Store.listen(this.handleUpdate);
     }

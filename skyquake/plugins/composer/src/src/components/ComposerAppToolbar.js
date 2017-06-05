@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -142,8 +142,16 @@ const ComposerAppToolbar = React.createClass({
 			);
 		}
 		const hasSelection = SelectionManager.getSelections().length > 0;
+		if(this.props.panelTabShown != 'descriptor') {
+			style.pointerEvents = 'none';
+		}
 		return (
 			<div className="ComposerAppToolbar" style={style}>
+			{
+				(this.props.panelTabShown != 'descriptor') ?
+					<div className="disableOverlay"></div>
+				: null
+			}
 				{(()=>{
 					if (this.props.isEditingNSD || this.props.isEditingVNFD) {
 						return (

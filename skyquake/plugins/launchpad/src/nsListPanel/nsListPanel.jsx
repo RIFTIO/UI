@@ -326,10 +326,47 @@ export default class NsListPanel extends React.Component {
         const {nsrs, openedNsrIDs, emptyRows, isVisible, ...props} = this.props;
         const fieldKeys = FIELD_KEYS;
         let glyphValue = (isVisible) ? "chevron-left" : "chevron-right";
+
+        let totalNSRs = nsrs && nsrs.length;
+        let runningNSRs = 0;
+        let failedNSRs = 0;
+        let scalingOutNSRs = 0;
+        let scalingInNSRs = 0;
+        let initializingNSRs = 0;
+
+        nsrs && nsrs.map((nsr) => {
+            nsr['operational-status'] == 'running' && runningNSRs++;
+            nsr['operational-status'] == 'failed' && failedNSRs++;
+            nsr['operational-status'] == 'scaling-out' && scalingOutNSRs++;
+            nsr['operational-status'] == 'scaling-in' && scalingInNSRs++;
+            (
+                nsr['operational-status'] == 'init' ||
+                nsr['operational-status'] == 'vl-init-phase' ||
+                nsr['operational-status'] == 'vnf-init-phase'
+            ) && initializingNSRs++;
+        });
+
+
         if (isVisible) {
+
+            let title = (
+                <div>
+                    NETWORK SERVICES
+                    <div className='nsrSummary'>
+                        <span className='nsrSummaryItem'>Total: {totalNSRs}</span>
+                        <span className='nsrSummaryItem'>Running: {runningNSRs}</span>
+                        <span className='nsrSummaryItem'>Failed: {failedNSRs}</span>
+                        <span className='nsrSummaryItem'>Scaling Out: {scalingOutNSRs}</span>
+                        <span className='nsrSummaryItem'>Scaling In: {scalingInNSRs}</span>
+                        <span className='nsrSummaryItem'>Initializing: {initializingNSRs}</span>
+                    </div>
+                </div>
+            );
+
+
             return (
                 <DashboardCard className="nsListPanel" showHeader={true}
-                    title="NETWORK SERVICES">
+                    title={title}>
                     {this.panelToolbar()}
                     <a onClick={this.handleShowHideToggle(!isVisible)}
                         className={"nsListPanelToggle"}>

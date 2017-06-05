@@ -17,7 +17,7 @@
  *
  */
 'use strict';
-const TEMPLATE = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+const TEMPLATE = 'axxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
 export default function guid(len = TEMPLATE.length) {
 	// http://byronsalau.com/blog/how-to-create-a-guid-uuid-in-javascript/
 	return TEMPLATE.replace(/[xy]/g, function (c) {

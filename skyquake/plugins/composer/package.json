@@ -26,8 +26,10 @@
     "grunt-cli": "^0.1.13",
     "jquery": "^2.1.4",
     "loaders.css": "^0.1.1",
-    "lodash": "^3.10.1",
+    "lodash": "^4.0.0",
+    "mkdirp": "^0.5.1",
     "moment": "^2.10.6",
+    "multer": "^1.2.0",
     "normalize.css": "^3.0.3",
     "numeral": "^1.5.3",
     "object-assign": "^4.0.1",
@@ -39,8 +41,10 @@
     "react-crouton": "^0.2.7",
     "react-dom": "^0.14.3",
     "react-popout": "^0.4.0",
+    "react-treeview": "^0.4.2",
     "request-promise": "^3.0.0",
-    "require-json": "0.0.1"
+    "require-json": "0.0.1",
+    "uuid": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",
@@ -49,6 +53,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.3.13",
     "babel-runtime": "^6.3.19",
+    "compression-webpack-plugin": "^0.3.2",
     "css-loader": "^0.23.0",
     "eslint": "^1.10.2",
     "eslint-loader": "^1.1.1",

@@ -17,7 +17,9 @@
  *
  */
 import Alt from './alt';
-
+import _filter from 'lodash/filter';
+import _extend from 'lodash/extend';
+import _debounce from 'lodash/debounce';
 var FleetSource = require('./launchpadFleetSource.js');
 var FleetActions = require('./launchpadFleetActions.js');
 import CardActions from './launchpad_card/launchpadCardActions.js';
@@ -29,8 +31,6 @@ import {LaunchpadSettings} from './settings.js';
 
 
 var FleetStore;
-var _ = require('underscore');
-//  _.debounce(function(){});
 function FleetStoreConstructor() {
   var self = this;
   this.fleets = [];
@@ -134,7 +134,7 @@ FleetStoreConstructor.prototype.openNSRSocketSuccess = function(connection) {
       let deletingNSRs = [];
 
       if (self.nsrs) {
-        deletingNSRs = _.filter(self.nsrs, function(nsr) {
+        deletingNSRs = _filter(self.nsrs, function(nsr) {
           return nsr.deleting == true;
         });
       };
@@ -142,7 +142,7 @@ FleetStoreConstructor.prototype.openNSRSocketSuccess = function(connection) {
       deletingNSRs.forEach(function(deletingNSR) {
         data.nsrs.map(nsr => {
           if (nsr.id == deletingNSR.id) {
-            _.extend(nsr, deletingNSR);
+            _extend(nsr, deletingNSR);
           }
         });
       });
@@ -191,7 +191,7 @@ FleetStoreConstructor.prototype.deleteNsrInstanceError = function(data) {};
 FleetStoreConstructor.prototype.getNsrInstancesError = function(data) {
   console.log('ERROR', data)
 };
-FleetStoreConstructor.prototype.handleUpdateControlInput = _.debounce(function(data) {
+FleetStoreConstructor.prototype.handleUpdateControlInput = _debounce(function(data) {
   var opt = data[0];
   FleetStore.nsrControl(opt.operation, opt.url, data[1])
 }, 500).bind(null);
@@ -279,5 +279,5 @@ FleetStoreConstructor.prototype.getVDUConsoleLinkSuccess = function(data) {
   data['console-url'] && window.open(data['console-url']);
 }
 
-FleetStore = Alt.createStore(FleetStoreConstructor);
+FleetStore = Alt.createStore(FleetStoreConstructor, 'FleetStore');
 module.exports = FleetStore;

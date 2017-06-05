@@ -20,7 +20,7 @@ import LoadingIndicator from 'widgets/loading-indicator/loadingIndicator.jsx';
 import DashboardCard from 'widgets/dashboard_card/dashboard_card.jsx';
 import Listy from 'widgets/listy/listy.js';
 
-import _ from 'underscore';
+import _isEmpty from 'lodash/isEmpty';
 
 export default class TopologyDetail extends React.Component {
     constructor(props) {
@@ -28,7 +28,7 @@ export default class TopologyDetail extends React.Component {
     }
 
     detailData(data) {
-        if (_.isEmpty(data)) {
+        if (_isEmpty(data)) {
             return {};
         } else {
             return {

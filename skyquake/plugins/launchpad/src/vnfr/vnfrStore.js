@@ -63,4 +63,4 @@ class VnfrStore {
   }
 };
 
-export default alt.createStore(VnfrStore)
+export default alt.createStore(VnfrStore, 'VnfrStore')

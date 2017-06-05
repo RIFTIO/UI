@@ -18,7 +18,7 @@
 import React from 'react';
 import RecordViewStore from '../recordViewer/recordViewStore.js';
 import Utils from 'utils/utils.js';
-import _ from 'lodash';
+import _isArray from 'lodash/isArray';
 import './nsVirtualLinks.scss';
 import UpTime from 'widgets/uptime/uptime.jsx';
 import NSVirtualLinksStore from './nsVirtualLinksStore.js';
@@ -64,7 +64,7 @@ class NsVirtualLinkDetails extends React.Component {
 				let value = this.resolvePath(this.props.virtualLink, field.key);
 				let textFields = [];
 
-				if (_.isArray(value)) {
+				if (_isArray(value)) {
 					value.map((v, idx) => {
 						let transformedValue = this.transformValue(field, v);
 						textFields.push(

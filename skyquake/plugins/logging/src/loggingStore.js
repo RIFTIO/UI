@@ -15,7 +15,9 @@
  *   limitations under the License.
  *
  */
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
+import _findIndex from 'lodash/findIndex';
+import _remove from 'lodash/remove';
 import LoggingActions from './loggingActions.js';
 import LoggingSource from './loggingSource.js';
 
@@ -44,7 +46,7 @@ class LoggingStore {
   getLoggingConfigSuccess = (data) => {
       console.log("LoggingStore.getLoggingConfigSuccess called. data=", data);
       // Do we need to do a deep clone?
-      const initialLoggingConfig = _.cloneDeep(data);
+      const initialLoggingConfig = _cloneDeep(data);
       console.log("initialLoggingConfig=", initialLoggingConfig);
       this.setState({
       loggingConfig: data,
@@ -59,7 +61,7 @@ class LoggingStore {
 
   putLoggingConfigSuccess = (data) => {
     console.log("LoggingStore.putLoggingConfigSuccess called. data=", data);
-    const initialLoggingConfig = _.cloneDeep(this.loggingConfig);
+    const initialLoggingConfig = _cloneDeep(this.loggingConfig);
     this.setState({
       isLoading: false,
       initialLoggingConfig: initialLoggingConfig
@@ -73,7 +75,7 @@ class LoggingStore {
   resetLoggingConfigData = (data) => {
     console.log('LoggingStore.resetLoggingConfigData called. data=', data);
     // Do we need to do a deep clone?
-    const loggingConfig = _.cloneDeep(this.initialLoggingConfig);
+    const loggingConfig = _cloneDeep(this.initialLoggingConfig);
     this.setState({
       loggingConfig: loggingConfig
     });
@@ -83,7 +85,7 @@ class LoggingStore {
     console.log("LoggingStore.updateCategoryDefaultSeverity:", catsev);
     // find the category
 
-    let catIndex = _.findIndex(this.loggingConfig.defaultSeverities, function(o) {
+    let catIndex = _findIndex(this.loggingConfig.defaultSeverities, function(o) {
       return o.category == catsev.category;
     });
     console.log("catIndex=", catIndex);
@@ -104,7 +106,7 @@ class LoggingStore {
     // find the category (name) in the syslog sink
 
     let self = this;
-    let loggingConfig = _.cloneDeep(this.loggingConfig);
+    let loggingConfig = _cloneDeep(this.loggingConfig);
     let syslogSinkIndex = -1;
     let nulledCategories = this.nulledCategories;
 
@@ -112,7 +114,7 @@ class LoggingStore {
       if (sink.name == 'syslog') {
         if (sink.filter) {
           if (sink.filter.category) {
-            let catIndex = _.findIndex(sink.filter.category, {
+            let catIndex = _findIndex(sink.filter.category, {
               name: catsev.name
             });
             if (catIndex != -1) {
@@ -127,14 +129,14 @@ class LoggingStore {
                 // missing elements is not allowed!
                 // When backend supports it, in loggingSource change the order of operations
                 // // Delete first followed by save/put.
-                // _.remove(loggingConfig.sinks[sinkIndex].filter.category, {
-                //   name: catsev.name
-                // });
+                _remove(loggingConfig.sinks[sinkIndex].filter.category, {
+                  name: catsev.name
+                });
               } else {
                 sink.filter.category[catIndex] = catsev;
               }
             } else {
-              _.remove(nulledCategories, (v) => v == catsev.name);
+              _remove(nulledCategories, (v) => v == catsev.name);
               this.setState({
                 nulledCategories: nulledCategories
               });
@@ -216,4 +218,4 @@ class LoggingStore {
   }
 }
 
-export default alt.createStore(LoggingStore);
+export default alt.createStore(LoggingStore, 'LoggingStore');

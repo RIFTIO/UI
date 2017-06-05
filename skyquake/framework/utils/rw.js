@@ -30,6 +30,11 @@
  *     ['c', 'd']
  */
 
+import _isNumber from 'lodash/isNumber';
+import _each from 'lodash/each';
+import _flatten from 'lodash/flatten';
+import _union from 'lodash/union';
+
 var rw = rw || {
   // Angular specific for now but can be modified in one location if need ever be
   BaseController: function() {
@@ -304,7 +309,7 @@ rw.math = {
   },
 
   sum : function(total, i, key, value) {
-    if (_.isNumber(value)) {
+    if (_isNumber(value)) {
       total[key] = (i === 0 ? value : (total[key] + value));
     }
   },
@@ -312,7 +317,7 @@ rw.math = {
   sum2 : function(key) {
     return function(prev, cur, i) {
       var value = cur[key];
-      if (_.isNumber(value)) {
+      if (_isNumber(value)) {
         if (typeof(prev) === 'undefined') {
           return value;
         } else {
@@ -326,7 +331,7 @@ rw.math = {
   max : function(key) {
     return function(prev, cur, i) {
       var value = cur[key];
-      if (_.isNumber(value)) {
+      if (_isNumber(value)) {
         if (typeof(prev) === 'undefined') {
           return value;
         } else if (prev < value) {
@@ -370,7 +375,7 @@ rw.math = {
       operation(total, i, key, value);
     };
     for (i = 0; i < rows.length; i++) {
-      _.each(rows[i], f);
+      _each(rows[i], f);
     }
   }
 };
@@ -702,10 +707,10 @@ rw.api.setOffline(rw.search_params['offline']);
 
 rw.vnf = {
   ports: function(service) {
-    return _.flatten(jsonPath.eval(service, '$.connector[*].interface[*].port'));
+    return _flatten(jsonPath.eval(service, '$.connector[*].interface[*].port'));
   },
   fabricPorts: function(service) {
-    return _.flatten(jsonPath.eval(service, '$.vm[*].fabric.port'));
+    return _flatten(jsonPath.eval(service, '$.vm[*].fabric.port'));
   }
 };
 
@@ -749,7 +754,7 @@ rw.VcsVisitor.prototype = {
     }
     var i = 0;
     var self = this;
-    _.each(children, function(child) {
+    _each(children, function(child) {
       self.visit.call(self, child, parent, i, listType);
       i += 1;
     });
@@ -759,7 +764,7 @@ rw.VcsVisitor.prototype = {
 rw.vcs = {
 
   allVms : function() {
-    return _.flatten([this.jpath('$.collection[*].vm'), this.jpath('$.collection[*].collection[*].vm')], true);
+    return _flatten([this.jpath('$.collection[*].vm'), this.jpath('$.collection[*].collection[*].vm')], true);
   },
 
   vms: function(n) {
@@ -826,7 +831,7 @@ rw.vcs = {
   getChildren: function(n) {
     switch (rw.vcs.nodeType(n)) {
       case 'rwcolony':
-        return 'vm' in n ? _.union(n.collection, n.vm) : n.collection;
+        return 'vm' in n ? _union(n.collection, n.vm) : n.collection;
       case 'rwcluster':
         return n.vm;
       case 'RWVM':
@@ -838,7 +843,7 @@ rw.vcs = {
   },
 
   jpath : function(jpath, n) {
-    return _.flatten(jsonPath.eval(n || this, jpath), true);
+    return _flatten(jsonPath.eval(n || this, jpath), true);
   }
 };
 

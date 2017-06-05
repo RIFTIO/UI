@@ -15,7 +15,7 @@
  *   limitations under the License.
  *
  */
-var Webpack = require('webpack');
+var webpack = require('webpack');
 var path = require('path');
 var nodeModulesPath = path.resolve(__dirname, 'node_modules');
 var buildPath = path.resolve(__dirname, 'public', 'build');
@@ -23,6 +23,7 @@ var mainPath = path.resolve(__dirname, 'src', 'main.js');
 var uiPluginCmakeBuild = process.env.ui_plugin_cmake_build || false;
 var frameworkPath = uiPluginCmakeBuild?'../../../../skyquake/skyquake-build/framework':'../../framework';
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CompressionPlugin = require("compression-webpack-plugin");
 // Added to overcome node-sass bug https://github.com/iam4x/isomorphic-flux-boilerplate/issues/62
 process.env.UV_THREADPOOL_SIZE=64;
 var config = {
@@ -64,10 +65,24 @@ var config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            filename: '../index.html'
-            , templateContent: '<div id="content"></div>'
-        }),
-        new Webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js", Infinity)
+            filename: '../index.html', 
+            templateContent: '<div id="content"></div>'
+        })
     ]
 };
+
+if (process.argv.indexOf('--optimize-minimize') !== -1) {
+    // we are going to output a gzip file in the production process
+    config.output.filename = "gzip-" + config.output.filename;
+    config.plugins.push(new webpack.DefinePlugin({ // <-- key to reducing React's size
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }));
+    config.plugins.push(new CompressionPlugin({
+        asset: "[path]", // overwrite js file with gz file
+        algorithm: "gzip",
+        test: /\.(js)$/
+    }));
+}
 module.exports = config;

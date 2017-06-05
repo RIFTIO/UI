@@ -43,4 +43,4 @@ class HeaderStoreConstructor {
     }
 }
 
-export default Alt.createStore(HeaderStoreConstructor)
+export default Alt.createStore(HeaderStoreConstructor, 'HeaderStoreConstructor')

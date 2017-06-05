@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,8 +59,8 @@ const Button = React.createClass({
 		const className = ClassNames(this.props.className, 'Button');
 		return (
 			<div className={className} onClick={this.props.onClick} title={title} draggable={draggable} onDragStart={this.props.onDragStart}>
-				<img src={src} />
-				<span>{label}</span>
+				{ src ? <img src={src} /> : null }
+				{label}
 			</div>
 		);
 	}

@@ -46,7 +46,7 @@
 
     handleParamChange = (paramIndex, configPrimitiveIndex, vnfrIndex, e) => {
         let vnfrs = this.state.vnfrs;
-        vnfrs[vnfrIndex]["vnf-configuration"]["service-primitive"][configPrimitiveIndex]["parameter"][paramIndex].value = e.target.value
+        vnfrs[vnfrIndex]["vnf-configuration"]["config-primitive"][configPrimitiveIndex]["parameter"][paramIndex].value = e.target.value
         this.setState({
             vnfrs: vnfrs
         })
@@ -63,8 +63,8 @@
     constructConfigPrimitiveTabs = (tabList, tabPanels) => {
         let mandatoryFieldValue = 'true';
         this.state.vnfrs && this.state.vnfrs.map((vnfr, vnfrIndex) => {
-            if (vnfr['vnf-configuration'] && vnfr['vnf-configuration']['service-primitive'] && vnfr['vnf-configuration']['service-primitive'].length > 0) {
-                vnfr['vnf-configuration']['service-primitive'].map((configPrimitive, configPrimitiveIndex) => {
+            if (vnfr['vnf-configuration'] && vnfr['vnf-configuration']['config-primitive'] && vnfr['vnf-configuration']['config-primitive'].length > 0) {
+                vnfr['vnf-configuration']['config-primitive'].map((configPrimitive, configPrimitiveIndex) => {
                     let params = [];
                     if (configPrimitive['parameter'] && configPrimitive['parameter'].length > 0) {
                         configPrimitive['parameter'].map((param, paramIndex) => {
@@ -123,7 +123,7 @@
         return (
             <div className="nsConfigPrimitives vnfrConfigPrimitives">
                 <div className="launchpadCard_title">
-                  SERVICE-PRIMITIVES {displayConfigStatus}
+                  CONFIG-PRIMITIVES {displayConfigStatus}
                 </div>
                 <div className={isConfiguring ? 'configuring': 'nsConfigPrimitiveTabs'}>
                     <Tabs onSelect={this.handleSelect}>

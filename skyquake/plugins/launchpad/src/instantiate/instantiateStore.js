@@ -20,7 +20,8 @@ import NetworkServiceSource from './launchNetworkServiceSource.js';
 import GUID from 'utils/guid.js';
 import AppHeaderActions from 'widgets/header/headerActions.js';
 import Alt from '../alt';
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
+import _find from 'lodash/find';
 
 
 class LaunchNetworkServiceStore {
@@ -188,10 +189,10 @@ class LaunchNetworkServiceStore {
         });
         return window.location.hash = 'launchpad/' + tokenizedHash[2];
     }
-    launchNSRError(error) {
+    launchNSRError(data) {
         var msg = 'Something went wrong while trying to instantiate. Check the error logs for more information';
-        if(error) {
-            msg = error;
+        if (data.error) {
+            msg = data.error;
         }
         Alt.actions.global.showNotification.defer(msg);
         Alt.actions.global.hideScreenLoader.defer();
@@ -484,6 +485,11 @@ class LaunchNetworkServiceStore {
                     let value = e.target.nodeName == "SELECT" ? JSON.parse(e.target.value) : e.target.value;
                     self.ipProfiles[i]['ip-profile-params'][key] = value;
 
+                    if (value == '') {
+                        // Don't send this key
+                        delete self.ipProfiles[i]['ip-profile-params'][key];
+                    }
+
                     self.setState({ipProfiles:self.ipProfiles});
                 }
             },
@@ -635,7 +641,7 @@ class LaunchNetworkServiceStore {
             },
             updateSSHkeyRef: function(i, j, remove){
                 return function(e) {
-                    let usersList = _.cloneDeep(self.usersList)
+                    let usersList = _cloneDeep(self.usersList)
                     let keys = usersList[i]['ssh-authorized-key'];
                     if(!remove) {
                         let keyRef = JSON.parse(e.target.value).name;
@@ -667,7 +673,7 @@ class LaunchNetworkServiceStore {
 
         // Create a filtered NSD payload from the decorated one as RW.REST cannot handle extra parameters now
         let nsdPayload = {};
-        nsdPayload = _.cloneDeep(_.find(this.state.nsd[0].descriptors, {id: this.state.selectedNSDid}));
+        nsdPayload = _cloneDeep(_find(this.state.nsd[0].descriptors, {id: this.state.selectedNSDid}));
 
         if (nsdPayload != {}) {
             nsdPayload['meta'] && delete nsdPayload['meta'];
@@ -846,5 +852,4 @@ function getMockData() {
         pnfd: data.pnfd
     });
 }
-// export default Alt.createStore(LaunchNetworkServiceStore);
 export default LaunchNetworkServiceStore;

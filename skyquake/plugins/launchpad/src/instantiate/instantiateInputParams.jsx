@@ -105,12 +105,13 @@ export default class InstantiateInputParams extends Component {
   }
   inputParametersHTML = (props) => {
     let inputParameters = props.inputParameters;
+    const handleChange = (i, event) => props.updateInputParam(i, event.target.value);
     return inputParameters && inputParameters.map(function(input, i) {
         return (
                 <div className="configure-nsd_section" key={i}>
                   <h3 className="launchpadCard_title">Input Parameters</h3>
                   <div className="inputControls">
-                      <TextInput label={ input.label || input.xpath } type="text" onChange={props.updateInputParam.bind(self, i)} />
+                      <TextInput label={ input.label || input.xpath } type="text" onChange={handleChange.bind(this, i)} />
                   </div>
                 </div>
         )
@@ -484,6 +485,7 @@ export default class InstantiateInputParams extends Component {
         <div className="input_group input_group-users" key={i}>
           <div className="inputControls">
           <div style={{fontWeight: 'bold', display: 'flex'}}>USER <span onClick={usersFn.remove(i)} className="removeInput"><img src={imgRemove} />Remove</span></div>
+
             <TextInput onChange={usersFn.update(i, 'name')} label="USERNAME" value={i.name} />
             <TextInput onChange={usersFn.update(i, 'user-info')} label="REAL NAME" value={i.gecos} />
             {

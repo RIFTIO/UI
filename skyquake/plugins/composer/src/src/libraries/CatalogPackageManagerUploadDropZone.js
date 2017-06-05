@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,18 +35,24 @@ const ACTIONS = {
 };
 
 function getCatalogPackageManagerServerOrigin() {
-	return Utils.getSearchParams(window.location).upload_server + ':4567';
+	// return Utils.getSearchParams(window.location).upload_server + ':4567';
+	return window.location.origin;
 }
 
 function initializeDropZone(element = '#dropzone', button = false, action = ACTIONS.onboard) {
+	let Auth = 'Basic ' + window.sessionStorage.getItem("auth");
+    let dev_download_server = Utils.getSearchParams(window.location).dev_download_server;
 	DropZone.autoDiscover = false;
 	return new DropZone(element, {
-		paramName: 'descriptor',
+		paramName: 'package',
 		url() {
 			if (action === ACTIONS.update) {
-				return getCatalogPackageManagerServerOrigin() + '/api/update';
+				return getCatalogPackageManagerServerOrigin() + '/composer/update?api_server=' + Utils.getSearchParams(window.location).api_server + '&upload_server=' + Utils.getSearchParams(window.location).upload_server + ( dev_download_server ? '&dev_download_server=' + dev_download_server : '');
 			}
-			return getCatalogPackageManagerServerOrigin() + '/api/upload';
+			return getCatalogPackageManagerServerOrigin() + '/composer/upload?api_server=' + Utils.getSearchParams(window.location).api_server + '&upload_server=' + Utils.getSearchParams(window.location).upload_server + ( dev_download_server ? '&dev_download_server=' + dev_download_server : '');
+		},
+		headers: {
+			'Authorization': Auth
 		},
 		maxFilesize: 10000000000,
 		clickable: button,

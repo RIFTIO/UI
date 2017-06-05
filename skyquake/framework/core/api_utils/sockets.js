@@ -32,16 +32,8 @@ var Promise = require('promise');
 var url = require('url');
 var sockjs = require('sockjs');
 var websocket_multiplex = require('websocket-multiplex');
+var utils = require('./utils.js');
 
-
-function getPortForProtocol (protocol) {
-  switch (protocol) {
-    case 'http':
-      return 8000;
-    case 'https':
-      return 8443;
-  }
-}
 
 var Subscriptions = function() {
   this.ID = 0;
@@ -85,7 +77,7 @@ Subscriptions.prototype.subscribe = function(req, callback) {
     var origin = '';
     if (req.query['api_server']) {
       var api_server_protocol = req.query['api_server'].match(protocolTest)[1];
-      var api_server_origin = req.query['api_server'] + ':' + getPortForProtocol(api_server_protocol);
+      var api_server_origin = req.query['api_server'] + ':' + utils.getPortForProtocol(api_server_protocol);
       origin = api_server_origin;
       protocol = api_server_protocol;
     } else {

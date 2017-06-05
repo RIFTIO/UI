@@ -17,19 +17,24 @@
  */
 import React from 'react';
 import RecordViewStore from '../recordViewer/recordViewStore.js';
+import SkyquakeComponent from 'widgets/skyquake_container/skyquakeComponent.jsx';
 import Button from 'widgets/button/rw.button.js';
 import Utils from 'utils/utils.js';
-import _ from 'underscore';
 import UpTime from 'widgets/uptime/uptime.jsx';
 import './nsrScalingGroups.scss';
 
-export default class NsrScalingGroups extends React.Component {
+class NsrScalingGroups extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
 	}
 
-	handleExecuteClick = (nsr_id, scaling_group_id, event) => {
+	handleExecuteClick = (nsr_id, scaling_group_id, max_instance_count, event) => {
+		let self = this;
+		if (this.getInstancesForScalingGroup(scaling_group_id) == max_instance_count) {
+			self.props.flux.actions.global.showNotification("Maximum allowed scaling instances created for this group. Cannot create any more");
+			return;
+		}
 		RecordViewStore.createScalingGroupInstance({
 			nsr_id: nsr_id,
 			scaling_group_id: scaling_group_id
@@ -133,9 +138,7 @@ export default class NsrScalingGroups extends React.Component {
 
 			let sgInstanceTable = this.createScalingGroupTable(sgd.name);
 
-			let sgCreateInstanceButton = (sgd['scaling-type'] && sgd['scaling-type'] == 'automatic') ? null : (
-				<Button label='Create Scaling Group Instance' className="dark" isDisabled={this.getInstancesForScalingGroup(sgd.name) == sgd["max-instance-count"]} isLoading={false} onClick={this.handleExecuteClick.bind(this, this.props.data.id, sgd.name)} />
-			);
+			let sgCreateInstanceButton = <Button label='Create Scaling Group Instance' className="dark" isDisabled={this.getInstancesForScalingGroup(sgd.name) == sgd["max-instance-count"]} isLoading={false} onClick={this.handleExecuteClick.bind(this, this.props.data.id, sgd.name, sgd['max-instance-count'])} />
 
 			let scalingGroup =
 				<div>
@@ -160,3 +163,5 @@ export default class NsrScalingGroups extends React.Component {
 	}
 
 }
+
+export default SkyquakeComponent(NsrScalingGroups);

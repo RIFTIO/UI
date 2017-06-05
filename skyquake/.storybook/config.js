@@ -6,7 +6,8 @@ function loadStories() {
   // require('../tests/stories/sshKeyCard');
   // require('../tests/stories/button');
   // require('../tests/stories/sq-input-slider');
-  require('../tests/stories/catalogCard');
+  // require('../tests/stories/catalogCard');
+  require('../tests/stories/FileManager');
   // require as many stories as you need.
 }
 

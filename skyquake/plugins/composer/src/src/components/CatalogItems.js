@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -119,8 +119,8 @@ const CatalogItems = React.createClass({
 			);
 		});
 		return (
-			<div className="CatalogItems" data-offset-parent="true">
-				<ul>
+			<div className="CatalogItems">
+				<ul data-offset-parent="true">
 					{items.length ? items : messages.catalogWelcome}
 				</ul>
 			</div>

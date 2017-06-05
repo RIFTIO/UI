@@ -11,7 +11,7 @@ import 'style/base.scss';
 // import StyleGuideItem from 'react-style-guide';
 // import '../../node_modules/react-style-guide/node_modules/highlight.js/styles/github.css';
 
-const Store = Alt.createStore(SshKeyStore)
+const Store = Alt.createStore(SshKeyStore, 'SshKeyStore');
 
 storiesOf('CatalogCard', module)
 // .add('page', () => (<SshKeys />))

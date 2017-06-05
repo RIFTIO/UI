@@ -19,7 +19,8 @@ import React from 'react';
 import Utils from 'utils/utils.js';
 import Button from 'widgets/button/rw.button.js';
 import './login.scss'
-let rw = require('utils/rw.js');
+import rw from 'utils/rw.js';
+
 class LoginScreen extends React.Component{
   constructor(props) {
     super(props);

@@ -11,7 +11,7 @@ import Alt from '../../framework/widgets/skyquake_container/skyquakeAltInstance.
 import {Panel, PanelWrapper} from '../../framework/widgets/panel/panel.jsx'
 import '../../node_modules/open-iconic/font/css/open-iconic.css';
 import 'style/base.scss';
-const Store = Alt.createStore(InstantiateStore)
+const Store = Alt.createStore(InstantiateStore, 'InstantiateStore');
 // import StyleGuideItem from 'react-style-guide';
 // import '../../node_modules/react-style-guide/node_modules/highlight.js/styles/github.css';
 let SampleNSD = {

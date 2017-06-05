@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Button from 'widgets/button/rw.button.js';
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
 import SkyquakeComponent from 'widgets/skyquake_container/skyquakeComponent.jsx';
 import Crouton from 'react-crouton';
 import TextInput from 'widgets/form_controls/textInput.jsx';
@@ -65,36 +65,13 @@ class Account extends React.Component {
             self.props.flux.actions.global.showNotification("Please give the account a name");
             return;
         } else {
-            var type = Account['account-type'];
-            var params = Account.params;
-
-            if(params) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i].ref;
-                    if (typeof(Account[type]) == 'undefined' || typeof(Account[type][param]) == 'undefined' || Account[type][param] == "") {
-                        if (!params[i].optional) {
-                            self.props.flux.actions.global.showNotification("Please fill all account details");
-                            return;
-                        }
-                    }
-                }
-            }
-
-            let nestedParams = Account.nestedParams && Account.nestedParams;
-            if (nestedParams && nestedParams.params) {
-                for (let i = 0; i < nestedParams.params.length; i++) {
-                    let nestedParam = nestedParams.params[i].ref;
-                    if (typeof(Account[type]) == 'undefined' || typeof(Account[type][nestedParams['container-name']][nestedParam]) == 'undefined' || Account[type][nestedParams['container-name']][nestedParam] == "") {
-                        if (!nestedParams.params[i].optional) {
-                            self.props.flux.actions.global.showNotification("Please fill all account details");
-                            return;
-                        }
-                    }
-                }
+            if(!wasAllDetailsFilled(Account)) {
+                self.props.flux.actions.global.showNotification("Please fill all account details");
+                return;
             }
         }
 
-        let newAccount = _.cloneDeep(removeTrailingWhitespace(Account));
+        let newAccount = _cloneDeep(removeTrailingWhitespace(Account));
         delete newAccount.params;
         newAccount.nestedParams &&
             newAccount.nestedParams['container-name'] &&
@@ -106,8 +83,8 @@ class Account extends React.Component {
             self.props.router.push({pathname:'accounts'});
             self.props.flux.actions.global.hideScreenLoader.defer();
         },
-         function() {
-            self.props.flux.actions.global.showNotification("There was an error creating your account. Please contact your system administrator.");
+         function(error) {
+            self.props.flux.actions.global.showNotification(error);
             self.props.flux.actions.global.hideScreenLoader.defer();
          });
     }
@@ -116,6 +93,12 @@ class Account extends React.Component {
         var self = this;
         var Account = this.state.account;
         let AccountType = this.state.accountType;
+        
+        if(!wasAllDetailsFilled(Account)) {
+            self.props.flux.actions.global.showNotification("Please fill all account details");
+            return;
+        }
+
         this.props.flux.actions.global.showScreenLoader();
         this.props.store.update(Account, AccountType).then(function() {
             self.props.router.push({pathname:'accounts'});
@@ -169,7 +152,7 @@ class Account extends React.Component {
     }
     evaluateSubmit = (e) => {
         if (e.keyCode == 13) {
-            if (this.props.edit) {
+            if (this.props.params.name != 'create') {
                 this.update(e);
             } else {
                 this.create(e);
@@ -433,6 +416,35 @@ SelectOption.defaultProps = {
   onChange: function(e) {
     console.dir(e)
   }
+}
+
+function wasAllDetailsFilled(Account) {
+    var type = Account['account-type'];
+    var params = Account.params;
+    
+    if(params) {
+        for (var i = 0; i < params.length; i++) {
+            var param = params[i].ref;
+            if (typeof(Account[type]) == 'undefined' || typeof(Account[type][param]) == 'undefined' || Account[type][param] == "") {
+                if (!params[i].optional) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    let nestedParams = Account.nestedParams && Account.nestedParams;
+    if (nestedParams && nestedParams.params) {
+        for (let i = 0; i < nestedParams.params.length; i++) {
+            let nestedParam = nestedParams.params[i].ref;
+            if (typeof(Account[type]) == 'undefined' || typeof(Account[type][nestedParams['container-name']][nestedParam]) == 'undefined' || Account[type][nestedParams['container-name']][nestedParam] == "") {
+                if (!nestedParams.params[i].optional) {
+                    return false;
+                }
+            }
+        }
+    }   
+    return true;
 }
 
 function removeTrailingWhitespace(Account) {

@@ -28,14 +28,15 @@ var path = require('path');
 var uiPluginCmakeBuild = process.env.ui_plugin_cmake_build || false;
 var frameworkPath = uiPluginCmakeBuild?'../../../../skyquake/skyquake-build/framework':'../../framework';
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CompressionPlugin = require("compression-webpack-plugin");
 // Added to overcome node-sass bug https://github.com/iam4x/isomorphic-flux-boilerplate/issues/62
 process.env.UV_THREADPOOL_SIZE=64;
-module.exports = {
+var config = {
 	devtool: 'source-map',
 	output: {
 		publicPath: 'assets/',
 		path: 'public/assets/',
-		filename: 'src/main.js'
+		filename: 'bundle.js'
 	},
 
 	debug: false,
@@ -60,18 +61,6 @@ module.exports = {
 			'helpers': path.join(process.cwd(), './test/helpers/')
         }
     },
-	plugins: [
-		// new webpack.optimize.DedupePlugin(),
-		// new webpack.optimize.UglifyJsPlugin(),
-		// new webpack.optimize.OccurenceOrderPlugin(),
-		// new webpack.optimize.AggressiveMergingPlugin(),
-		// new webpack.NoErrorsPlugin(),
-		new HtmlWebpackPlugin({
-            filename: '../index.html'
-            , templateContent: '<div id="app"></div>'
-        })
-	],
-
 	module: {
 		noParse: [/autoit.js/],
 		// preLoaders: [
@@ -101,5 +90,28 @@ module.exports = {
 			},
 			{ test: /\.json$/, loader: "json-loader" },
 		]
-	}
+	},
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: '../index.html', 
+            templateContent: '<div id="app"></div>'
+        })
+    ]
 };
+
+if (process.argv.indexOf('--optimize-minimize') !== -1) {
+    // we are going to output a gzip file in the production process
+    config.output.filename = "gzip-" + config.output.filename;
+    config.plugins.push(new webpack.DefinePlugin({ // <-- key to reducing React's size
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }));
+    config.plugins.push(new CompressionPlugin({
+        asset: "[path]", // overwrite js file with gz file
+        algorithm: "gzip",
+        test: /\.(js)$/
+    }));
+}
+
+module.exports = config;

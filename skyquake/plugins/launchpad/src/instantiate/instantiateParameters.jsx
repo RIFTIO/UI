@@ -44,52 +44,53 @@ class Instantiate extends Component {
             <PanelWrapper>
             <InstantiateDescriptorPanel descriptor={selectedNSD} />
             <Panel title="Input Parameters">
-        <InstantiateInputParams
+                <InstantiateInputParams
 
-            nsFn={this.props.nsFn()}
-            vnfFn={this.props.vnfFn()}
-            vldFn={this.props.vldFn()}
-            ipProfileFn={this.props.ipProfileFn()}
-            dnsFn={this.props.dnsFn()}
-            usersFn={this.props.usersFn()}
-            sshFn={this.props.sshFn()}
-            updateName={this.props.nameUpdated}
-            updateInputParam={this.props.updateInputParam}
+                    nsFn={this.props.nsFn()}
+                    vnfFn={this.props.vnfFn()}
+                    vldFn={this.props.vldFn()}
+                    ipProfileFn={this.props.ipProfileFn()}
+                    dnsFn={this.props.dnsFn()}
+                    usersFn={this.props.usersFn()}
+                    sshFn={this.props.sshFn()}
+                    updateName={this.props.nameUpdated}
+                    updateInputParam={this.props.updateInputParam}
 
-            nsd={selectedNSD}
-            selectedNSDid={this.props.selectedNSDid}
-            name={this.props.name}
+                    nsd={selectedNSD}
+                    selectedNSDid={this.props.selectedNSDid}
+                    name={this.props.name}
 
-            cloudAccounts={this.props.cloudAccounts}
-            selectedCloudAccount={this.props.selectedCloudAccount}
-            vnfdCloudAccounts={this.props.vnfdCloudAccounts}
-            ro={this.props.ro}
-            dataCenters={this.props.dataCenters}
-            configAgentAccounts={this.props.configAgentAccounts}
-            inputParameters={this.props['input-parameters']}
+                    cloudAccounts={this.props.cloudAccounts}
+                    selectedCloudAccount={this.props.selectedCloudAccount}
+                    vnfdCloudAccounts={this.props.vnfdCloudAccounts}
+                    ro={this.props.ro}
+                    dataCenters={this.props.dataCenters}
+                    configAgentAccounts={this.props.configAgentAccounts}
+                    inputParameters={this.props['input-parameters']}
 
-            displayPlacementGroups={this.props.displayPlacementGroups}
+                    displayPlacementGroups={this.props.displayPlacementGroups}
 
 
-            nsPlacementGroups={this.props['ns-placement-groups']}
-            vnfPlacementGroups={this.props['vnf-placement-groups']}
+                    nsPlacementGroups={this.props['ns-placement-groups']}
+                    vnfPlacementGroups={this.props['vnf-placement-groups']}
 
-            vlds={this.props.vld}
+                    vlds={this.props.vld}
 
-            ipProfileList={this.props.ipProfiles}
+                    ipProfileList={this.props.ipProfiles}
 
-            sshKeysList={this.props.sshKeysList}
-            sshKeysRef={this.props.sshKeysRef}
+                    sshKeysList={this.props.sshKeysList}
+                    sshKeysRef={this.props.sshKeysRef}
 
-            dnsServers={this.props.dnsServers}
+                    dnsServers={this.props.dnsServers}
 
-            usersList = {this.props.usersList}
-            selectedID={this.props.selectedNSDid}
-            selectedNSD={selectedNSD}
+                    usersList = {this.props.usersList}
+                    selectedID={this.props.selectedNSDid}
+                    selectedNSD={selectedNSD}
 
-            isOpenMano={this.props.isOpenMano}
+                    isOpenMano={this.props.isOpenMano}
 
-        /></Panel>
+                />
+            </Panel>
         </PanelWrapper>
     )
   }

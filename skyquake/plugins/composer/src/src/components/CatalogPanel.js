@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
  */
 'use strict';
 
-import _ from 'lodash'
+import _includes from 'lodash/includes'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import messages from './messages'
@@ -167,7 +167,7 @@ const CatalogPanel = React.createClass({
 			uiTransientState.isDrop = false;
 			uiTransientState.isDragging = true;
 			uiTransientState.wasTrayOpen = this.state.isTrayOpen;
-			uiTransientState.isDraggingFiles = _.contains(e.dataTransfer.types, 'Files');
+			uiTransientState.isDraggingFiles = _includes(e.dataTransfer.types, 'Files');
 			const dragState = ComposerAppStore.getState().drag || {};
 			if (uiTransientState.isDraggingFiles || (dragState.type === 'catalog-item')) {
 				CatalogPanelTrayActions.open();

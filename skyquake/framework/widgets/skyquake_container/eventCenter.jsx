@@ -28,7 +28,9 @@ import { Link } from 'react-router';
 import Utils from 'utils/utils.js';
 import Crouton from 'react-crouton';
 import TreeView from 'react-treeview';
-import _ from 'lodash';
+import _isEqual from 'lodash/isEqual';
+import _merge from 'lodash/merge';
+import _indexOf from 'lodash/indexOf';
 import '../../../node_modules/react-treeview/react-treeview.css';
 import './eventCenter.scss';
 
@@ -48,7 +50,7 @@ export default class EventCenter extends React.Component {
 		if (props.newNotificationEvent && props.newNotificationMsg) {
 			if (latestNotification) {
 				latestNotification = JSON.parse(latestNotification);
-				if (!_.isEqual(props.newNotificationMsg, latestNotification)) {
+				if (!_isEqual(props.newNotificationMsg, latestNotification)) {
 					stateObject.newNotificationEvent = props.newNotificationEvent;
 					stateObject.newNotificationMsg = props.newNotificationMsg;
 					sessionStorage.setItem('latestNotification', JSON.stringify(stateObject.newNotificationMsg));
@@ -67,7 +69,7 @@ export default class EventCenter extends React.Component {
 		}
 
 		if (notificationList) {
-			stateObject.notifications = _.merge(notificationList, props.notifications);
+			stateObject.notifications = _merge(notificationList, props.notifications);
 		} else {
 			stateObject.notifications = props.notifications;
 		}
@@ -112,7 +114,7 @@ export default class EventCenter extends React.Component {
 			notificationFields.eventTime = notification.eventTime;
 
 			Object.keys(notification).map((notificationKey) => {
-				if (_.indexOf(['source', 'eventTime'], notificationKey) == -1) {
+				if (_indexOf(['source', 'eventTime'], notificationKey) == -1) {
 					notificationFields.eventKey = notificationKey;
 					notificationFields.details = notification[notificationFields.eventKey];
 				}

@@ -20,20 +20,31 @@ import Alt from 'widgets/skyquake_container/skyquakeAltInstance';
 function crashStore () {
   this.exportAsync(require('./crashSource.js'));
   this.bindActions(require('./crashActions.js'));
+  this.isLoading = false;
+  this.crashList = null;
 }
 
 crashStore.prototype.getCrashDetailsSuccess = function(list) {
   this.setState({
-    crashList:list
+    isLoading: false,
+    crashList: list
   })
-  console.log('success', list)
+  console.log('Crash details load success', list)
 };
 crashStore.prototype.getCrashDetailsLoading = function(info) {
+  this.setState({
+    isLoading: true,
+    crashList: null,
+  })
   console.log('Loading crash details...', info)
 };
 crashStore.prototype.getCrashDetailsFailure = function(info) {
+  this.setState({
+    isLoading: false,
+    error: info
+  })
   console.log('Failed to retrieve crash/debug details', info)
 };
 
-module.exports = Alt.createStore(crashStore);;
+module.exports = Alt.createStore(crashStore, 'crashStore');;
 

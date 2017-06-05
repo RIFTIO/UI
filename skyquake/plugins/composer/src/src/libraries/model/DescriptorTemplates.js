@@ -23,25 +23,27 @@
 
 'use strict';
 
-import guid from './../guid'
-import InstanceCounter from './../InstanceCounter'
-
+//
+// note: values can be expressions. After the object is created the funtion will be 
+// invoked. if you use the arrow function syntax the this pointer will reference
+// the created object.
+//
 export default {
 	'vnfd': {
-		'id': '5b9af24e-2c8f-4792-9d6e-ff9eabb97f15',
-		'name': 'vnfd-1',
-		'short-name': 'vnfd-1',
 		'description': 'A simple VNF descriptor w/ one VDU',
 		'version': '1.0',
 		'connection-point': [
 			{
-				'name': 'cp1',
+				'name': 'connection-point-1',
 				'type': 'VPORT'
 			}
 		],
 		'vdu': [
 			{
-				'id': 'abd6831e-f811-4580-9aad-1de9c6424180',
+				'uiState': {
+					'type': 'vdu'
+				},
+				'id': 'vdu-1',
 				'name': 'vdu-1',
 				'vm-flavor': {
 					'vcpu-count': 4,
@@ -52,7 +54,7 @@ export default {
 				'external-interface': [
 					{
 						'name': 'eth0',
-						'vnfd-connection-point-ref': 'cp1',
+						'vnfd-connection-point-ref': 'connection-point-1',
 						'virtual-interface': {
 							'type': 'VIRTIO'
 						}
@@ -62,8 +64,6 @@ export default {
 		]
 	},
 	'vnfd.internal-vld': {
-		'id': () => guid(),
-		'name': () => 'vld-' + InstanceCounter.count('new.vnfd.internal-vld'),
 		'description': 'Virtual link for internal fabric',
 		'type': 'ELAN'
 	}

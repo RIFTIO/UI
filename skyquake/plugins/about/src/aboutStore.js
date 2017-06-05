@@ -37,5 +37,5 @@ aboutStore.prototype.getCreateTimeSuccess = function(time) {
 	console.log('uptime success', time)
 }
 
-module.exports = Alt.createStore(aboutStore);;
+module.exports = Alt.createStore(aboutStore, 'aboutStore');;
 

@@ -135,4 +135,4 @@ class TopologyStore {
     }
 
 }
-export default Alt.createStore(TopologyStore);
+export default Alt.createStore(TopologyStore, 'TopologyStore');

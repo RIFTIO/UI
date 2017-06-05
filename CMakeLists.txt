@@ -31,7 +31,7 @@ cmake_minimum_required(VERSION 2.8)
 # DO NOT add any code before this and DO NOT
 # include this file anywhere else
 ##
-include(rift_submodule)
+include(rift_submodule NO_POLICY_SCOPE)
 
 ##
 # Submodule specific includes will go here,
@@ -51,6 +51,15 @@ set(
 rift_add_subdirs(
   SUBDIR_LIST
     ${subdirs}
+  )
+
+##
+# Only skyquake package contains anything
+##
+rift_set_component_package_fields(
+  skyquake
+  DESCRIPTION "RIFT.ware UI"
+  POST_INSTALL_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/postinst"
   )
 
 ##

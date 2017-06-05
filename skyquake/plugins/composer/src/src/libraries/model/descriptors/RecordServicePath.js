@@ -21,7 +21,6 @@
 
 'use strict';
 
-import _ from 'lodash'
 import DescriptorModel from '../DescriptorModel'
 import RspConnectionPointRef from './RspConnectionPointRef'
 import DescriptorModelFactory from '../DescriptorModelFactory'

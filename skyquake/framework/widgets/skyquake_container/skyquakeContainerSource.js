@@ -18,13 +18,14 @@
 import Alt from './skyquakeAltInstance.js';
 import $ from 'jquery';
 import SkyquakeContainerActions from './skyquakeContainerActions'
+import rw from 'utils/rw.js';
+import Utils from 'utils/utils.js';
 
-let Utils = require('utils/utils.js');
-let API_SERVER = require('utils/rw.js').getSearchParams(window.location).api_server;
+let API_SERVER = rw.getSearchParams(window.location).api_server;
 let HOST = API_SERVER;
-let NODE_PORT = require('utils/rw.js').getSearchParams(window.location).api_port || ((window.location.protocol == 'https:') ? 8443 : 8000);
-let DEV_MODE = require('utils/rw.js').getSearchParams(window.location).dev_mode || false;
-let RW_REST_API_PORT = require('utils/rw.js').getSearchParams(window.location).rw_rest_api_port || 8008;
+let NODE_PORT = rw.getSearchParams(window.location).api_port || ((window.location.protocol == 'https:') ? 8443 : 8000);
+let DEV_MODE = rw.getSearchParams(window.location).dev_mode || false;
+let RW_REST_API_PORT = rw.getSearchParams(window.location).rw_rest_api_port || 8008;
 
 if (DEV_MODE) {
     HOST = window.location.protocol + '//' + window.location.hostname;
@@ -55,7 +56,7 @@ export default {
             remote: function(state, recordID) {
                 return new Promise(function(resolve, reject) {
                     $.ajax({
-                        url: '//' + window.location.hostname + ':' + NODE_PORT + '/api/operational/restconf-state/streams?api_server=' + API_SERVER,
+                        url: '//' + window.location.hostname + ':' + window.location.port + '/api/operational/restconf-state/streams?api_server=' + API_SERVER,
                         type: 'GET',
                         beforeSend: Utils.addAuthorizationStub,
                         success: function(data) {
@@ -78,7 +79,7 @@ export default {
             remote: function(state, location, streamSource) {
                 return new Promise((resolve, reject) => {
                     $.ajax({
-                        url: '//' + window.location.hostname + ':' + NODE_PORT + '/socket-polling?api_server=' + API_SERVER,
+                        url: '//' + window.location.hostname + ':' + window.location.port + '/socket-polling?api_server=' + API_SERVER,
                         type: 'POST',
                         beforeSend: Utils.addAuthorizationStub,
                         data: {

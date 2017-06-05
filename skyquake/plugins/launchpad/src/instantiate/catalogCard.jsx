@@ -18,6 +18,7 @@
 import './catalogCard.scss';
 import 'style/common.scss';
 import React, {Component} from 'react';
+import Utils from 'utils/utils.js'
 export default class CatalogCard extends Component {
     constructor(props) {
         super(props);
@@ -66,7 +67,7 @@ export default class CatalogCard extends Component {
                                     <div key={i} className="details-section-item">
                                         <img
                                             onError={self.handleImageError}
-                                            src={cleanDataURI(descriptor.logo, 'vnfd', descriptor.id)}
+                                            src={Utils.cleanImageDataURI(descriptor.logo, 'vnfd', descriptor.id)}
                                         />
                                         {v['name']}
                                     </div>
@@ -125,7 +126,7 @@ export default class CatalogCard extends Component {
         className = "CatalogCard " + buildClass(this.props);
         return (
             <div className={className} onClick={props.onClick} onDoubleClick={props.onDoubleClick}>
-                <img className="CatalogCard-thumbnail"  onError={this.handleImageError} src={cleanDataURI(descriptor.logo, 'nsd', descriptor.id)} />
+                <img className="CatalogCard-thumbnail"  onError={this.handleImageError} src={Utils.cleanImageDataURI(descriptor.logo, 'nsd', descriptor.id)} />
                 <div className="CatalogCard-body">
                     <div className="CatalogCard-header">
                         <div className="CatalogCard-name">
@@ -178,19 +179,3 @@ function cardHandler(element) {
         ''
     }
 }
-
-function cleanDataURI(imageString, type, id) {
-        if (/\bbase64\b/g.test(imageString)) {
-            return imageString;
-        } else if (/<\?xml\b/g.test(imageString)) {
-            const imgStr = imageString.substring(imageString.indexOf('<?xml'));
-            return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(imgStr);
-        } else if (/\.(svg|png|gif|jpeg|jpg)$/.test(imageString)) {
-            return '/composer/assets/logos/' + type + '/' + id + '/' + imageString;
-            // return require('../images/logos/' + imageString);
-        }
-        if(type == 'nsd' || type == 'vnfd') {
-            return require('style/img/catalog-'+type+'-default.svg');
-        }
-        return require('style/img/catalog-default.svg');
-    }

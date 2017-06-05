@@ -1,6 +1,6 @@
 
 /*
- * 
+ *
  *   Copyright 2016 RIFT.IO Inc
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,8 @@ $tray-head-height: 25px;
 	right: 0;
 	height: 25px;
 	min-width: 300px;
-	background-color: white;
+	/* background-color: white;*/
+	background: $panel-bg-color;
 	&.-with-transitions {
 		transition: height 300ms cubic-bezier(0.230, 1.000, 0.320, 1.000);
 	}
@@ -57,6 +58,45 @@ $tray-head-height: 25px;
 		overflow: hidden;
 		&:hover {
 			overflow: auto;
+		}
+	}
+
+
+	&-buttons {
+		display: -ms-flexbox;
+		display: flex;
+		margin-top: 2px;
+		button {
+			padding: 6px 34px;
+		}
+	}
+	.tray-body {
+		top:31px;
+	}
+	.ConfigParameterMap {
+		padding: 10px 20px;
+		background: $panel-bg-color;
+
+		.toggleable {
+			display:-ms-flexbox;
+			display:flex;
+			-ms-flex-wrap: wrap;
+			    flex-wrap: wrap;
+		    background: $panel-bg-color-contrast;
+		    margin:8px 0;
+		 	& > .leaf-property {
+			    -ms-flex: 1 0 100%;
+		        flex: 1 0 100%;
+		        margin: 8px 0;
+				padding: 0 8px;
+				background: none;
+		        .property-label {
+		        }
+			}
+			& > .container-property {
+				-ms-flex: 1 1;
+				    flex: 1 1;
+			}
 		}
 	}
 

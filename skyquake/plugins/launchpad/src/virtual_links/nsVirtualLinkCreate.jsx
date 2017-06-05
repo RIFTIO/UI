@@ -17,7 +17,6 @@
  */
 import React from 'react';
 import Utils from 'utils/utils.js';
-import _ from 'lodash';
 import './nsVirtualLinks.scss';
 import NSVirtualLinkCreateStore from './nsVirtualLinkCreateStore.js';
 import SkyquakeComponent from 'widgets/skyquake_container/skyquakeComponent.jsx';
@@ -31,7 +30,8 @@ import SelectOption from 'widgets/form_controls/selectOption.jsx';
 class NsVirtualLinkCreate extends React.Component {
 	constructor(props) {
 		super(props);
-	    this.Store = this.props.flux.stores.hasOwnProperty('NSVirtualLinkCreateStore') ? this.props.flux.stores.NSVirtualLinkCreateStore : this.props.flux.createStore(NSVirtualLinkCreateStore);
+	    this.Store = this.props.flux.stores.hasOwnProperty('NSVirtualLinkCreateStore') ? 
+				this.props.flux.stores.NSVirtualLinkCreateStore : this.props.flux.createStore(NSVirtualLinkCreateStore, 'NSVirtualLinkCreateStore');
 		this.state = this.Store.getState();
 		this.Store.listen(this.handleUpdate);
 	}
@@ -39,6 +39,7 @@ class NsVirtualLinkCreate extends React.Component {
 	componentWillMount() {
 		(!this.state.nsrId && this.props.nsrId) && this.Store.saveNSRId(this.props.nsrId);
 		this.Store.saveMode(this.props.mode);
+		this.Store.saveOnSuccess(this.props.onSuccess);
 		switch (this.props.mode) {
 			case 'creating':
 				if (!this.state.vld) {
